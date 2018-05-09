@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
         while ((directory = readdir(dirp)) != NULL) {
             if (directory->d_type == DT_REG) {
                 cout << "The stopword file \'" << directory->d_name << "\' has been detected\n";
-                tree.addStopWords(std::string("./stopwords") + (directory->d_name));
+                tree.addStopWords(std::string("./stopwords/") + (directory->d_name));
             }
         }
 

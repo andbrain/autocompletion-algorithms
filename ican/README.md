@@ -7,10 +7,22 @@ Some test files and miscelaneous stuff can be found [here](https://drive.google.
 
 # Execution
 
+## TwoLevel
 ```
-./binfile |data_file.wl| < |queries.txt|
+./binfile |data_file.wl| |stopword_file.sw| < |queries.txt|
 ```
 
-# Developers :
- - Daniel Xavier
- - Ruan Gabriel
+## ICAN
+```
+./binfile |data_file.wl| |stopword_file.sw| < |queries.txt|
+```
+
+## META
+```
+./binfile |data_file.txt| |queries.txt| |distancia de edição|
+```
+
+## IncNGTrie
+```
+./binfile -t |distancia de edição| -d |data_file.txt| < |queries.txt|
+```

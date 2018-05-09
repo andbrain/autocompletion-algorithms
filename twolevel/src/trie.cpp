@@ -114,6 +114,7 @@ void Trie_t::addStopWords(const std::string& filename)
 
   while (std::getline(fileInputStream, currentLine)) {
     std::transform(currentLine.begin(), currentLine.end(), currentLine.begin(), ::tolower);
+    // std::cout << currentLine << std::endl;
     m_stopWords.insert(currentLine);
   }
 }
