@@ -8,7 +8,7 @@ Some test files and miscelaneous stuff can be found [here](https://drive.google.
 # Execution
 
 ```
-./binfile <word_list.wl> <char_map.cm> {<stopword_file.sw>}
+./binfile |data_file.wl| < |queries.txt|
 ```
 
 # Developers :
