@@ -1,16 +1,12 @@
 #include "occurrence.hpp"
 #include "trie.hpp"
-#include <algorithm>
-#include <dirent.h>
 #include <chrono>
+#include <dirent.h>
 #include <fstream>
 #include <iostream>
-#include <queue>
 #include <sstream>
 
 using namespace std;
-
-//============================================================================================
 
 int main(int argc, char* argv[])
 {
@@ -25,8 +21,6 @@ int main(int argc, char* argv[])
     string query;
     char opt;
     int limit;
-    int wordCount = 0;
-
 
     DIR* dirp;
     struct dirent* directory;
@@ -43,33 +37,32 @@ int main(int argc, char* argv[])
         closedir(dirp);
     }
 
+    // tree.putFile(argv[1]);
 
     while (std::getline(fileInputStream, currentLine)) {
         std::stringstream wordStream(currentLine);
         char position = 1;
         unsigned int ref = tree.insertItemOnTable(currentLine);
         while (std::getline(wordStream, word, ' ')) {
+            // word.pop_back();
 
-            wordCount++;
-            
             if (!tree.isStopWord(word)) {
                 tree.putWord(word, position, ref);
-            
             }
+
             position++;
         }
     }
 
     tree.buildActiveNodeSet();
 
-    cout << "FuzzyWord Search v0.1 \t\t Teewa 2017\n\n";
-    cout << "Base contains " << wordCount << " words";
-    cout << "P - print the trie (caution).\n";
-    cout << "R <NUMBER> - set the results number limit.\n";
-    cout << "L <NUMBER> - set the fuzzy characters number limit\n";
-    cout << "F <STRING> - fuzzy string query\n";
-    cout << "Q <STRING> - normal string query\n";
-    cout << "E - exit\n";
+    // cout << "FuzzyWord Search v0.2 \t\t Teewa 2017\n\n";
+    // cout << "P - print the trie (caution).\n";
+    // cout << "R <NUMBER> - set the results number limit.\n";
+    // cout << "L <NUMBER> - set the fuzzy characters number limit\n";
+    // cout << "F <STRING> - fuzzy string query\n";
+    // cout << "Q <STRING> - normal string query\n";
+    // cout << "E - exit\n";
 
     // cout << "\n>";
     while (cin >> opt) {
@@ -116,55 +109,44 @@ int main(int argc, char* argv[])
             string realQuery;
 
             while (cin >> query && query != "$") {
-                realQuery += query + ' ';
+
+                if (!tree.isStopWord(query)) {
+                    realQuery += query + ' ';
+                }
             }
-            realQuery.pop_back();
-            // cout << realQuery << " - "<< realQuery.size() <<'\n';
-            // std::getline(std::cin, query);
-            // query.pop_back();
-            // cout << '\n';
 
-            // busca na trie apenas a primeira palavra
-            std::string firstWord;
-            std::stringstream wordStream(realQuery);
-            std::getline(wordStream, firstWord, ' ');
+            if (realQuery.size() > 0) {
 
-            std::chrono::nanoseconds start = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                realQuery.pop_back();
+                // cout << '\n';
 
-            auto fuzzyWords = tree.searchSimilarKeyword(firstWord);
-            
+                std::chrono::nanoseconds start = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                auto fuzzyWords = tree.searchSimilarKeyword(realQuery);
+                std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                
+                
+                nq++;
+                
+                std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
 
-            // int limit = 5;
+                global += (end - start).count();
 
-            if (wordStream.rdbuf()->streambuf::in_avail() != 0) {
-
-                fuzzyWords = tree.searchSecondLevel(fuzzyWords, realQuery);
-
-                // for (trie::Occurrence_t& ocurrence : fuzzyWords) {
-                //     if (!limit--) {
-                //         break;
-                //     }
-
-                //     std::cout << tree.getItemOnTable(ocurrence.getRef()) << '\n';
+                // unsigned int count = 1;
+                // for(trie::Occurrence_t ocurrence : fuzzyWords){
+                // while (!fuzzyWords.empty() && count < 10) {
+                //     auto ocurrence = fuzzyWords.top();
+                //     fuzzyWords.pop();
+                //     cout << tree.getItemOnTable(ocurrence.itemRef) << endl;
+                //     count++;
                 // }
-            } 
-            // else {
-            //     for (trie::Occurrence_t& ocurrence : fuzzyWords) {
-            //         if (!limit--) {
-            //             break;
-            //         }
-            //         std::cout << tree.getItemOnTable(ocurrence.getRef()) << '\n';
-            //     }
-            // }
 
-            std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-            nq++;
-            std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
+                // cout << "]\n}";
 
-            global += (end - start).count();
-
-            // cout << '\n';
+                // cout << '\n';
+            } else {
+                cout << "Cannot find this query\n";
+            }
             break;
         }
 

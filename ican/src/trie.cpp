@@ -1,6 +1,5 @@
 #include "trie.hpp"
 #include "occurrence.hpp"
-#include <climits>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -18,6 +17,14 @@ using namespace trie;
 ActiveNode_t::ActiveNode_t(TrieNode_t* nd, int ed)
 : node(nd)
 , editDistance(ed)
+, positionDistance(0)
+{
+}
+
+ActiveNode_t::ActiveNode_t(TrieNode_t* nd, int ed, int pos)
+: node(nd)
+, editDistance(ed)
+, positionDistance(pos)
 {
 }
 
@@ -36,7 +43,7 @@ void Trie_t::buildActiveNodeSet()
 {
   std::queue<std::pair<TrieNode_t*, int>> seekQueue;
   std::unordered_map<TrieNode_t*, TrieNode_t*> father;
-  // std::set<TrieNode_t*> visited;
+  std::set<TrieNode_t*> visited;
 
   seekQueue.emplace(this->m_lambdaNode, 0); // add the lambdaNode to the seek
   m_activeNodeSet.emplace(this->m_lambdaNode, 0); // add the lambdaNode to the activeSet
@@ -50,40 +57,35 @@ void Trie_t::buildActiveNodeSet()
 
     for (TrieNode_t* child : currentNode.first->getChildren()) {
       // verify if the child hasn't been visited recently
-      // if (visited.find(child) == visited.end()) {
-      int currentLevel = currentNode.second + 1;
+      if (visited.find(child) == visited.end()) {
+        int currentLevel = currentNode.second + 1;
 
-      // visited.emplace(child); // add child to the visited set
-      father.emplace(child, currentNode.first); // set current vertex as father
+        visited.emplace(child); // add child to the visited set
+        father.emplace(child, currentNode.first); // set current vertex as father
 
-      if (currentLevel < m_fuzzyLimitThreshold) { // add the child on the seek only if it has a threshold < fuzzy
-        seekQueue.emplace(child, currentLevel);
-      }
+        if (currentLevel < m_fuzzyLimitThreshold) { // add the child on the seek only if it has a threshold < fuzzy
+          seekQueue.emplace(child, currentLevel);
+        }
 
-      if (child->isEndOfWord()) { // verify if this child is end of word
-        TrieNode_t* currentChild = child;
-        m_activeNodeSet.emplace(currentChild, currentLevel); // add the child to the activeSet
+        if (child->isEndOfWord()) { // verify if this child is end of word
+          TrieNode_t* currentChild = child;
+          m_activeNodeSet.emplace(currentChild, currentLevel); // add the child to the activeSet
 
-        auto currentChild_it = father.find(child);
+          auto currentChild_it = father.find(child);
 
-        // add all the father's father's father's ... father's of this child to the activeSet
-        while (currentChild_it->second != nullptr) {
+          // add all the father's father's father's ... father's of this child to the activeSet
+          while (currentChild_it->second != nullptr) {
 
-          if (m_activeNodeSet.emplace(currentChild_it->second, --currentLevel).second) {
-            currentChild_it = father.find(currentChild_it->second);
-          } else {
-            break;
+            if (m_activeNodeSet.emplace(currentChild_it->second, --currentLevel).second) {
+              currentChild_it = father.find(currentChild_it->second);
+            } else {
+              break;
+            }
           }
         }
       }
-      // }
     }
   }
-  // std::cout << "\nActive Node Set : \n";
-  // for (auto nod : m_activeNodeSet) {
-  //   std::cout << " - Node : " << m_reverseCharacterMap[nod.node->getContent()] << '-' << nod.editDistance << '\n';
-  // }
-  // std::cout << '\n';
 }
 
 // void Trie_t::encodeCharacters(const std::string& filename)
@@ -104,9 +106,6 @@ void Trie_t::buildActiveNodeSet()
 //   m_reverseCharacterMap[0] = '#'; // lambda character
 // }
 
-// Trie_t public methods
-
-
 void Trie_t::addStopWords(const std::string& filename)
 {
   std::string currentLine;
@@ -124,13 +123,15 @@ bool Trie_t::isStopWord(std::string str)
   return m_stopWords.find(str) != m_stopWords.end();
 }
 
+// Trie_t public methods
+
 Trie_t::Trie_t()
 // : m_characterMap(255, '$')
 : m_reverseCharacterMap(255, '$')
 , m_searchLimitThreshold(5)
 , m_fuzzyLimitThreshold(1)
 {
-  this->m_lambdaNode = new TrieNode_t();
+  this->m_lambdaNode = new TrieNode_t(0);
   // this->encodeCharacters(filename);
 }
 
@@ -162,7 +163,8 @@ void Trie_t::printTrie()
   }
 }
 
-std::string Trie_t::getItemOnTable(unsigned int id){
+std::string Trie_t::getItemOnTable(unsigned int id)
+{
   return this->m_itemTable.getElement(id);
 }
 
@@ -171,12 +173,71 @@ unsigned int Trie_t::insertItemOnTable(const std::string& str)
   return this->m_itemTable.emplaceElement(str);
 }
 
-void Trie_t::putWord(const std::string& str, unsigned int position, unsigned int reference)
+// void Trie_t::putFile(const std::string& filename)
+// {
+
+//   struct PreprocessWord_Bundle_t {
+//     TrieNode_t* node;
+//     std::list<std::pair<char, unsigned int>> posRefList;
+//     PreprocessWord_Bundle_t(TrieNode_t* _node, char _pos, unsigned int _ref)
+//     : node(_node)
+//     {
+//       posRefList.emplace_back(_pos, _ref);
+//     }
+//   };
+
+//   std::string currentLine;
+//   std::string word;
+//   std::ifstream fileInputStream(filename);
+//   std::map<std::string, PreprocessWord_Bundle_t> stringBundle;
+
+//   while (std::getline(fileInputStream, currentLine)) {
+
+//     while (std::getline(fileInputStream, currentLine)) {
+//       std::stringstream wordStream(currentLine);
+//       char position = 1;
+//       unsigned int ref = this->insertItemOnTable(currentLine);
+//       while (std::getline(wordStream, word, ' ')) {
+
+//         if (!this->isStopWord(word)) {
+
+//           std::map<std::string, PreprocessWord_Bundle_t>::iterator it;
+
+//           if ((it = stringBundle.find(word)) != stringBundle.end()) {
+//             it->second.posRefList.emplace_back(position, ref);
+//           } else {
+//             // from https://stackoverflow.com/questions/14075128/mapemplace-with-a-custom-value-type
+//             stringBundle.emplace(std::piecewise_construct, std::make_tuple(word), std::make_tuple(putNReturnWord(word), position, ref));
+//           }
+//         }
+//         position++;
+//       }
+//     }
+//   }
+
+//   for(std::map<std::string, PreprocessWord_Bundle_t>::iterator it = stringBundle.begin() ; it != stringBundle.end() ; it++){
+//     // std::cout << "Keyword \"" << it->first << "\"\n";
+//     for(auto prList : it->second.posRefList){
+//       // std::cout << "\tPosition : " << (int)ref.first << " / Ref : " << ref.second <<  " / Phrase : \"" << m_itemTable.getElement(ref.second) <<"\"\n";
+//       it->second.node->addOccurrence(prList.first, prList.second);
+//     }
+//   }
+
+// }
+
+TrieNode_t* Trie_t::putNReturnWord(const std::string& str)
 {
   TrieNode_t *currentRoot, *lastRoot;
   currentRoot = this->m_lambdaNode;
   for (char c : str) {
-    // char code = this->m_characterMap[c];
+
+    // unsigned int code = this->m_characterMap[c];
+
+
+    // if(code >= m_characterMap.size()){
+    //   std::cout << "Warning : the word \"" << str << "\" contains unrecognized characters\n";
+    // }
+
     lastRoot = currentRoot;
     currentRoot = currentRoot->getChild(c);
     if (!currentRoot) {
@@ -190,7 +251,38 @@ void Trie_t::putWord(const std::string& str, unsigned int position, unsigned int
       currentRoot->buildOccurrences();
       currentRoot->setEndOfWord(true);
     }
-    // std::cout << "\nInserting word " << str << " ";
+
+    return currentRoot;
+  }
+
+  return nullptr;
+}
+
+void Trie_t::putWord(const std::string& str, char position, unsigned int reference)
+{
+  TrieNode_t *currentRoot, *lastRoot;
+  currentRoot = this->m_lambdaNode;
+  for (char c : str) {
+
+    // unsigned int code = this->m_characterMap[c];
+
+    // if(code >= m_characterMap.size()){
+    //   std::cout << "Warning : the word \"" << str << "\" contains unrecognized characters\n";
+    // }
+
+    lastRoot = currentRoot;
+    currentRoot = currentRoot->getChild(c);
+    if (!currentRoot) {
+      currentRoot = lastRoot->insertNReturnChild(c);
+    }
+  }
+
+  if (currentRoot != this->m_lambdaNode) {
+
+    if (!currentRoot->isEndOfWord()) {
+      currentRoot->buildOccurrences();
+      currentRoot->setEndOfWord(true);
+    }
     currentRoot->addOccurrence(position, reference);
   }
 }
@@ -208,8 +300,6 @@ std::set<ActiveNode_t> Trie_t::buildNewSet(std::set<ActiveNode_t>& set, char cur
     if (curActiveNode->editDistance < m_fuzzyLimitThreshold) {
       // std::cout << " * Updating distance for node " << m_reverseCharacterMap[curActiveNode->node->getContent()] << " from " << curActiveNode->editDistance << " to " << curActiveNode->editDistance + 1 << '\n';
       activeNodeSet.emplace(curActiveNode->node, curActiveNode->editDistance + 1);
-    } else {
-      // std::cout << " * Node " << m_reverseCharacterMap[curActiveNode->node->getContent()] << " will not be added to the set, cuz it's edit distance " << curActiveNode->editDistance << '\n';
     }
   }
 
@@ -308,82 +398,96 @@ std::set<ActiveNode_t> Trie_t::buildNewSet(std::set<ActiveNode_t>& set, char cur
   return activeNodeSet;
 }
 
-std::vector<Occurrence_t> Trie_t::searchSimilarKeyword(const std::string& keyword)
+std::priority_queue<Occurrence_t, std::vector<Occurrence_t> , OccurrencePriorityComparator_t> Trie_t::searchSimilarKeyword(const std::string& keyword)
 {
-  std::vector<Occurrence_t> answerList;
-  std::set<ActiveNode_t> activeNodesReceived = m_activeNodeSet;
-  std::unordered_set<TrieNode_t*> visitedNode;
-  int threshold = this->m_searchLimitThreshold;
+  std::set<Occurrence_t> lastAnswerSet;
+  std::list< std::priority_queue<ActiveNode_t,std::vector<ActiveNode_t>,ActiveNodeComparator_t> > activeLists;
+  std::string curKeyword;
 
-  for (char c : keyword) {
-    // unsigned int curCharCode = m_characterMap[c];
-    activeNodesReceived = buildNewSet(activeNodesReceived, c);
+  std::stringstream wordStream(keyword);
+
+  while (std::getline(wordStream, curKeyword, ' ')) {
+    std::set<ActiveNode_t> lastActiveNodes = this->m_activeNodeSet;
+    for (char c : curKeyword) {
+      // lastActiveNodes = buildNewSet(lastActiveNodes, m_characterMap[c]);
+      lastActiveNodes = buildNewSet(lastActiveNodes, c);
+    }
+
+
+    auto currentList = activeLists.emplace(activeLists.end() ,std::priority_queue<ActiveNode_t,std::vector<ActiveNode_t>,ActiveNodeComparator_t>());
+    for(auto node : lastActiveNodes){
+      currentList->push(node);
+    }
   }
 
-  // std::set<ActiveNode_t, ActiveNodeComparator_t> activeSet;
-  // activeSet.insert(activeNodesReceived.begin(), activeNodesReceived.end());
-  std::priority_queue<ActiveNode_t, std::vector<ActiveNode_t>, ActiveNodeComparator_t> activeSet;
+  char iteration = 1;
+  for (auto currentList : activeLists) {
+    // std::cout << "\n\n";
+    std::set<Occurrence_t> answerSet;
+    std::unordered_set<TrieNode_t*> visitedNode;
 
-  for (auto node : activeNodesReceived) {
-    activeSet.push(node);
-  }
-  //
-  //
-  // while(!activeSet.empty()){
-  //   auto activeNode = activeSet.top();
-  //   std::cout << "Node : " << m_reverseCharacterMap[activeNode.node->getContent()] << '-' << activeNode.editDistance << '\n';
-  //   activeSet.pop();
-  // }
+    while(!currentList.empty()){
 
-  // for (auto aNode : activeNodes) {
-  while (!activeSet.empty()) {
+      auto aNode = currentList.top();
+      currentList.pop();
 
-    auto aNode = activeSet.top();
-    activeSet.pop();
-
-    if (threshold > 0) {
       if (visitedNode.find(aNode.node) == visitedNode.end()) {
-        if (aNode.node->isEndOfWord()) {
-          threshold--;
-          // answerList.push_back((*aNode.node->getString()));
+        std::queue<TrieNode_t*> pQueue;
+        pQueue.push(aNode.node);
 
-          for (auto action : (*aNode.node->getOccurences())) {
-            answerList.push_back(action);
-            // std::cout << m_reverseCharacterMap[ aNode.node->getContent()] <<" - " << (int)action.getPosition() << '\n';
+        while (!pQueue.empty()) {
+          auto currentSeeker = pQueue.front();
+          visitedNode.insert(currentSeeker);
+          pQueue.pop();
+
+          if (currentSeeker->isEndOfWord()) {
+            for (auto action : (*currentSeeker->getOccurences())) {
+              // std::cout << action.itemRef << " - " << (int)action.positionOnItem << " : " << getItemOnTable(action.itemRef) << '\n';
+              action.weight = aNode.editDistance;
+              action.positionOnItem=abs(action.positionOnItem - iteration);
+              answerSet.insert(action);
+            }
           }
 
-          visitedNode.insert(aNode.node);
-        } else {
-
-          std::queue<TrieNode_t*> pQueue;
-          pQueue.push(aNode.node);
-
-          while (!pQueue.empty() && threshold) {
-            auto currentSeeker = pQueue.front();
-            visitedNode.insert(currentSeeker);
-            pQueue.pop();
-
-            if (currentSeeker->isEndOfWord()) {
-              // answerList.push_back(*currentSeeker->getString()); //transform string
-              for (auto action : (*currentSeeker->getOccurences())) {
-                answerList.push_back(action);
-                // std::cout << m_reverseCharacterMap[ currentSeeker->getContent()] <<" - " << (int)action.getPosition() << '\n';
-              }
-              threshold--;
-            }
-
-            for (TrieNode_t* curChild : currentSeeker->getChildren()) {
-              if (visitedNode.find(curChild) == visitedNode.end()) {
-                pQueue.emplace(curChild);
-              }
+          for (TrieNode_t* curChild : currentSeeker->getChildren()) {
+            if (visitedNode.find(curChild) == visitedNode.end()) {
+              pQueue.emplace(curChild);
             }
           }
         }
       }
+    }//
+
+    if (iteration > 1) {
+
+      for(auto ans = lastAnswerSet.begin(); ans != lastAnswerSet.end();){
+        auto iterator = answerSet.emplace(ans->itemRef, 0);
+        // std::cout << "TRYING at " << getItemOnTable(ans->itemRef) << " - " << (int)ans->positionOnItem << " - " << (int) iterator.first->positionOnItem <<  '\n';
+        if (iterator.second) {
+          // std::cout << "ERASED at " << (int)ans->positionOnItem << " - " << (int) iterator.first->positionOnItem <<  '\n';
+          ans = lastAnswerSet.erase(ans);
+        }else{
+          // std::cout << "MATCH at " << (int)ans->positionOnItem << " - " << (int) iterator.first->positionOnItem <<  '\n';
+          ans->weight += iterator.first->weight;
+          ans->positionOnItem += iterator.first->positionOnItem;
+          ++ans;
+        }
+
+      }
+    } else {
+      lastAnswerSet = answerSet;
     }
+
+    iteration++;
   }
 
-  return answerList;
+  std::priority_queue<Occurrence_t, std::vector<Occurrence_t> , OccurrencePriorityComparator_t> ocurrencesQueue;
+
+  for(auto ocur :lastAnswerSet){
+    ocurrencesQueue.push(ocur);
+  }
+
+  return ocurrencesQueue;
 }
 
 // std::vector<std::string> Trie_t::searchExactKeyword(const std::string& keyword)
@@ -393,16 +497,16 @@ std::vector<Occurrence_t> Trie_t::searchSimilarKeyword(const std::string& keywor
 //   std::queue<TrieNode_t*> pQueue;
 //   std::unordered_map<TrieNode_t*, std::vector<unsigned int>> keywords; // map that keeps the keywords for each node
 //   keywords.reserve(this->m_searchLimitThreshold << 1);
-//   // std::vector<char> wordToTheNode; // local variable that absorvs the current string of the found node as vector of its char codes
-//   // std::vector<unsigned int> keywordMapped; // local variable to absorv the current string as vector of its char codes
-
-//   // for (char c : keyword) {
-//   //   keywordMapped.push_back(c);
-//   // }
+//   std::vector<unsigned int> wordToTheNode; // local variable that absorvs the current string of the found node as vector of its char codes
+//   std::vector<unsigned int> keywordMapped; // local variable to absorv the current string as vector of its char codes
 
 //   for (char c : keyword) {
-//     currentNode = currentNode->getChild(c);
-//     // wordToTheNode.push_back(c);
+//     keywordMapped.push_back(this->m_characterMap[c]);
+//   }
+
+//   for (unsigned int currentCode : keywordMapped) {
+//     currentNode = currentNode->getChild(currentCode);
+//     wordToTheNode.push_back(currentCode);
 //     if (currentNode == nullptr) {
 //       break;
 //     }
@@ -438,120 +542,6 @@ std::vector<Occurrence_t> Trie_t::searchSimilarKeyword(const std::string& keywor
 
 //   return answerList;
 // }
-
-
-unsigned int Trie_t::editDistance(const std::string& s1, const std::string &s2){
-  const std::size_t len1 = s1.size(), len2 = s2.size();
-  std::vector<unsigned int> col(len2+1), prevCol(len2+1);
-
-  for (unsigned int i = 0; i < prevCol.size(); i++){
-    prevCol[i] = i;
-  }
-
-  for (unsigned int i = 0; i < len1; i++) {
-    col[0] = i+1;
-
-    for (unsigned int j = 0; j < len2; j++)
-    col[j+1] = std::min(prevCol[1 + j] + 1, std::min(col[j] + 1, prevCol[j] + (s1[i]==s2[j] ? 0 : 1) ));
-
-    col.swap(prevCol);
-  }  return prevCol[len2];
-}
-
-
-std::vector<Occurrence_t> Trie_t::searchSecondLevel(std::vector<Occurrence_t>& fuzzyWords, const std::string& realQuery){
-
-  std::set<trie::Occurrence_t*, trie::OccurrenceComparator_t> found;
-
-  for(Occurrence_t &ocurrence : fuzzyWords){
-
-    std::string item = getItemOnTable(ocurrence.getRef());
-
-    int distanceTotal = INT_MAX;
-
-    unsigned int numWords;
-
-    std::string currentQueryWord;
-    std::stringstream queryStream(realQuery); //realQuery stream
-    std::getline(queryStream, currentQueryWord, ' '); // get each word from the query (ignoring the first one)
-    while(std::getline(queryStream, currentQueryWord, ' ')){
-
-      numWords = 1;
-      std::string currentItemWord;
-      std::stringstream itemStream(item); // item of the current occurence
-      while(std::getline(itemStream, currentItemWord, ' ')){ // currentItemWord
-
-        transform(currentQueryWord.begin(), currentQueryWord.end(), currentQueryWord.begin(), ::tolower);
-        transform(currentItemWord.begin(), currentItemWord.end(), currentItemWord.begin(), ::tolower);
-
-        if(numWords != ocurrence.getPosition()){ // && currentItemWord.size() > 2
-
-          int distance = INT_MAX;
-
-          // if(queryStream.rdbuf()->std::streambuf::in_avail() != 0){
-          //   distance = editDistance(currentQueryWord, currentItemWord);
-          // }else{
-
-            int abs = currentItemWord.size() - currentQueryWord.size();
-
-            for(int i = 0; i<abs; i++){
-              currentItemWord.pop_back();
-            }
-
-            distance = editDistance(currentQueryWord, currentItemWord);
-          // }
-
-
-          if(distance <= m_fuzzyLimitThreshold){
-            // found.emplace(&ocurrence);
-            auto it = found.emplace(&ocurrence);
-
-            if(!it.second){
-              if((*it.first)->getPosition() > ocurrence.getPosition()){
-                (*it.first)->setPosition(ocurrence.getPosition());
-              }
-            }
-          }
-
-          if(distance < distanceTotal){
-            distanceTotal = distance;
-          }
-        }
-
-        numWords++;
-
-      }
-    }
-    ocurrence.setPosition(distanceTotal);
-  }
-
-  std::vector<trie::Occurrence_t*> founded;
-
-  while(!found.empty()){
-    founded.push_back(*found.begin());
-    found.erase(found.begin());
-  }
-
-  std::make_heap(founded.begin(), founded.end(), OccurrenceComparator2_t());
-
-  std::vector<Occurrence_t> answerList;
-
-  int c = 0;
-  while(!founded.empty() && c < this->m_searchLimitThreshold){
-    // std::cout << getItemOnTable(founded.front()->getRef()) << '\n';
-
-    answerList.push_back(*founded.front());
-
-    std::pop_heap(founded.begin(), founded.end(), OccurrenceComparator2_t());
-    founded.pop_back();
-
-    c++;
-
-  }
-
-  return answerList;
-
-}
 
 void Trie_t::setSearchLimitThreshold(int limit)
 {
