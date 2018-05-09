@@ -9,12 +9,12 @@ Some test files and miscelaneous stuff can be found [here](https://drive.google.
 
 ## TwoLevel
 ```
-./binfile |data_file.wl| |stopword_file.sw| < |queries.txt|
+./binfile |data_file.wl| < |queries.txt|
 ```
 
 ## ICAN
 ```
-./binfile |data_file.wl| |stopword_file.sw| < |queries.txt|
+./binfile |data_file.wl| < |queries.txt|
 ```
 
 ## META
