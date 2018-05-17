@@ -216,9 +216,9 @@ void quickFind(vector<TrieNode*>::iterator &vit, const vector<TrieNode*>::const_
 
 int main(int argc, char ** argv) {
 	int maxPrefix = 1000;
-	double search_time[maxPrefix];
-	double fetch_time[maxPrefix];
-	double qf_time[maxPrefix];
+	// double search_time[maxPrefix];
+	// double fetch_time[maxPrefix];
+	// double qf_time[maxPrefix];
 	int match_num[maxPrefix];
 	int result_num[maxPrefix];
 	int query_num[maxPrefix];
@@ -242,7 +242,14 @@ int main(int argc, char ** argv) {
 	double globalTime = 0.0;
 	long long globalTime2 = 0;
 
+	double timetotal = 0.0;
+	double tt = 0.0;
+
 	for (auto i = 0; i < queries.size(); i++) {
+
+		tt = 0;
+		std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+
 		MTrie* mtrie = new MTrie(tau);
 		mtrie->root->insertChild(trie->root, make_pair(0,0));
 
@@ -250,15 +257,10 @@ int main(int argc, char ** argv) {
 		printf("\n%s\n", queries[i].c_str());
 		printf("============================\n");*/
 
-		double timetotal = 0.0;
-		double tt = 0.0;
         vector<MTrieNode*> trash;
 		for (auto j = 1; j <= queries[i].length(); j++) {
-			timeval start, middle, term;
-			gettimeofday(&start, NULL);
-
-			tt = 0;
-			std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+			// timeval start, middle, term;
+			// gettimeofday(&start, NULL);
 			
 			queue<MTrieNode*> q;  // mnode
 			char ch = queries[i][j - 1];     // current key stroke
@@ -305,11 +307,11 @@ int main(int argc, char ** argv) {
 						if (themin > qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth))
 						  themin = qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth);
 					}
-					timeval S, T;
-					gettimeofday(&S, NULL);
-					quickFind(vit, vec.end(), node, themin, j);
-					gettimeofday(&T, NULL);
-					qf_time[j] += ((T.tv_sec - S.tv_sec) * 1000 + (T.tv_usec - S.tv_usec) * 1.0 / 1000);
+					// timeval S, T;
+					// gettimeofday(&S, NULL);
+					// quickFind(vit, vec.end(), node, themin, j);
+					// gettimeofday(&T, NULL);
+					// qf_time[j] += ((T.tv_sec - S.tv_sec) * 1000 + (T.tv_usec - S.tv_usec) * 1.0 / 1000);
 				}
 			}
 
@@ -369,7 +371,7 @@ int main(int argc, char ** argv) {
 				}
 			}
 
-			gettimeofday(&middle, NULL);
+			// gettimeofday(&middle, NULL);
 
 			vector<TrieNode*> m_nodes;
 			MTrieNode* cnode = mtrie->root->child;
@@ -394,10 +396,10 @@ int main(int argc, char ** argv) {
 			// end output results
 
 
-			gettimeofday(&term, NULL);
+			// gettimeofday(&term, NULL);
 
-			std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-			tt += (endt - startt).count();
+			// std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+			// tt += (endt - startt).count();
 
 			// query_num[j]++;
 			// match_num[j] += m_nodes.size();
@@ -410,13 +412,13 @@ int main(int argc, char ** argv) {
 			
 			
 			if (j == queries[i].length()){
-				// std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+				std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 				
 				// tt = (endt - startt).count();
 
-				cout << "search time " << i+1 << " = " << tt << endl;
+				cout << "search time " << i+1 << " = " << (endt - startt).count() << endl;
 				// globalTime += timetotal;
-				globalTime2 += tt;
+				globalTime2 += (endt - startt).count();
 				
 
 				// printf("Time: %ld  Result Num: %d  Nodes Num: %d  Match Num: %d\n", (term.tv_sec - start.tv_sec) * 1000000 +
