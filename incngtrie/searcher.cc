@@ -269,8 +269,14 @@ int main(int argc, char* argv[])
 
       // std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
+    double mglob, dnq, nstoms;
+    mglob = global;
+    dnq = num_queries;
+    nstoms = 1000000;
 
-      std::cout << "GLOBAL = " << global << std::endl;
+    std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
+    std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+    // std::cout << "GLOBAL = " << global << std::endl;
       
       //stri node_str = "";
       // stringstream str_stream;

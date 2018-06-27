@@ -130,7 +130,14 @@ int main(int argc, char* argv[])
         
     }
 
-    std::cout << "[LOG] GLOBAL " << global << " ns" << std::endl;
+
+    double mglob, dnq, nstoms;
+    mglob = global;
+    dnq = nq;
+    nstoms = 1000000;
+
+    std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
+    std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
 
     // cout << "FuzzyWord Search v0.1 \t\t Teewa 2017\n\n";
     // cout << "Base contains " << wordCount << " words";

@@ -447,8 +447,16 @@ int main(int argc, char ** argv) {
             delete t;
         }
 	}
+	
+	
+	double mglob, dnq, nstoms;
+    mglob = globalTime2;
+    dnq = queries.size();
+    nstoms = 1000000;
 
-	cout << "Global time = " << globalTime2 << endl;
+    std::cout << endl << "[LOG] GLOBAL " << globalTime2 << " ns" << std::endl;
+    std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+	// cout << "Global time = " << globalTime2 << endl;
 	// cout << "Global time = " << globalTime << endl;
 
 	// int idx = 1;
