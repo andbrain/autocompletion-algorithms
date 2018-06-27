@@ -9,17 +9,17 @@ Some test files and miscelaneous stuff can be found [here](https://drive.google.
 
 ## TwoLevel
 ```
-./binfile |data_file.wl| < |queries.txt|
+./binfile |data_file.wl| |queries.txt| |distancia de edição|(optional)
 ```
 
 ## ICAN
 ```
-./binfile |data_file.wl| < |queries.txt|
+./binfile |data_file.wl| |queries.txt| |distancia de edição|(optional)
 ```
 
 ## META
 ```
-./binfile |data_file.txt| |queries.txt| |distancia de edição|
+./binfile |data_file.txt| |queries.txt| |distancia de edição|(optional)
 ```
 
 ## IncNGTrie
