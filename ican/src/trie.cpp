@@ -493,6 +493,94 @@ std::priority_queue<Occurrence_t, std::vector<Occurrence_t> , OccurrencePriority
   return ocurrencesQueue;
 }
 
+std::priority_queue<Occurrence_t, std::vector<Occurrence_t>, OccurrencePriorityComparator_t>
+Trie_t::searchSimilarKeyword2(const std::string &keyword) {
+  std::unordered_set<Occurrence_t, OccurrenceHash_t> lastAnswerSet;
+  std::vector<std::vector<ActiveNode_t>> activeLists;
+  std::string curKeyword;
+
+
+  std::stringstream wordStream(keyword);
+
+  while (std::getline(wordStream, curKeyword, ' ')) {
+    std::set<ActiveNode_t> lastActiveNodes = this->m_activeNodeSet;
+    for (char c : curKeyword) {
+      lastActiveNodes = buildNewSet(lastActiveNodes, c);
+    }
+    auto currentList = activeLists.emplace(activeLists.end(),
+                                           std::vector<ActiveNode_t>());
+    for (auto node : lastActiveNodes) {
+      currentList->emplace_back(node);
+    }
+  }
+
+  size_t count = 0;
+
+  for (auto &a : activeLists) {
+    count += a.size();
+  }
+
+  char iteration = 1;
+  for (auto currentList : activeLists) {
+    std::unordered_set<Occurrence_t, OccurrenceHash_t> answerSet;
+    std::unordered_set<TrieNode_t *> visitedNode;
+
+    for (auto &aNode : currentList) {
+
+      if (visitedNode.find(aNode.node) == visitedNode.end()) {
+//                std::queue<TrieNode_t *> pQueue;
+//                pQueue.push(aNode.node);
+
+//                while (!pQueue.empty()) {
+//                    auto currentSeeker = pQueue.front();
+        visitedNode.emplace(aNode.node);
+
+        if (aNode.node->isEndOfWord()) {
+          for (auto action : (*aNode.node->getOccurences())) {
+            action.weight = aNode.editDistance;
+            action.positionOnItem = static_cast<char>(abs(action.positionOnItem - iteration));
+            answerSet.emplace(action);
+          }
+        }
+
+//                    for (TrieNode_t *curChild : currentSeeker->getChildren()) {
+//                        if (visitedNode.find(curChild) == visitedNode.end()) {
+//                            pQueue.emplace(curChild);
+//                        }
+//                    }
+      }
+    }
+
+
+    if (iteration > 1) {
+
+      for (auto ans = lastAnswerSet.begin(); ans != lastAnswerSet.end();) {
+        auto iterator = answerSet.emplace(ans->itemRef, 0);
+        if (iterator.second) {
+          ans = lastAnswerSet.erase(ans);
+        } else {
+          ans->weight += iterator.first->weight;
+          ans->positionOnItem += iterator.first->positionOnItem;
+          ++ans;
+        }
+
+      }
+    } else {
+      lastAnswerSet = answerSet;
+    }
+
+    iteration++;
+  }
+
+  std::priority_queue<Occurrence_t, std::vector<Occurrence_t>, OccurrencePriorityComparator_t> ocurrencesQueue;
+
+  for (auto ocur :lastAnswerSet) {
+    ocurrencesQueue.push(ocur);
+  }
+
+  return ocurrencesQueue;
+}
+
 // std::vector<std::string> Trie_t::searchExactKeyword(const std::string& keyword)
 // {
 //   std::vector<std::string> answerList;

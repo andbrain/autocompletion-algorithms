@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
             // cout << currentLine << endl;
 
             std::chrono::nanoseconds start = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            auto fuzzyWords = tree.searchSimilarKeyword(currentLine);
+            auto fuzzyWords = tree.searchSimilarKeyword2(currentLine);
             std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
             
             

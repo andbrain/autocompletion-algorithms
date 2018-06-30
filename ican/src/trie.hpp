@@ -47,6 +47,7 @@ namespace trie {
     void buildActiveNodeSet(); // used to build the activeNode set at once
     // std::vector<std::string> searchExactKeyword(const std::string&);
     std::priority_queue<Occurrence_t, std::vector<Occurrence_t> , OccurrencePriorityComparator_t> searchSimilarKeyword(const std::string&);
+      std::priority_queue<Occurrence_t, std::vector<Occurrence_t> , OccurrencePriorityComparator_t> searchSimilarKeyword2(const std::string&);
     std::string getItemOnTable(unsigned int);
     unsigned int insertItemOnTable(const std::string&);
   };
