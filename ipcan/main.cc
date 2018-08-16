@@ -20,10 +20,11 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <unordered_map>
+#include <tr1/unordered_map>
 #include <chrono>
 #include <stdlib.h>
 
+using namespace tr1;
 
 vector<string> recs;
 vector<string> queries;
@@ -36,10 +37,6 @@ void readData(string& filename, vector<string>& recs) {
 		  str[i] = tolower(str[i]);
 		recs.push_back(str);
 	}
-}
-
-bool comp_lower(const pair<int, int> & p, const int v) {
-	return p.first < v;
 }
 
 int main(int argc, char ** argv) {
@@ -63,12 +60,9 @@ int main(int argc, char ** argv) {
 	for (auto i = 0; i < recs.size(); i++)
 	  trie->append(recs[i].c_str(), i);
 	trie->buildIdx();
-	// finished indexing
 
 	for (auto i = 0; i < queries.size(); i++) {
-
 		std::chrono::nanoseconds start = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-
 		PrefixActiveNodeSet<char>* pset = new PrefixActiveNodeSet<char>(trie, tau);
 		for (auto j = 1; j <= queries[i].length(); j++) {
 			// timeval start, middle, term;
@@ -83,17 +77,21 @@ int main(int argc, char ** argv) {
 			// cout << pset->getNumberOfActiveNodes() << " active nodes" << endl;
 			// cout << "begin fetch results" << endl;
 			map<TrieNode<char>*, unsigned> minActiveNodes;
-
 			pset->computeMinimizedTrieNodesInRange(0, tau, minActiveNodes);
 			// cout << minActiveNodes.size() << " active nodes";
 			// cout << "fetch results" << endl;
-			//    unordered_set<int> resrec;
+			/*vector<int> resrec;
+			  for (auto mit = minActiveNodes.begin(); mit != minActiveNodes.end(); mit++)
+			  mit->first->getRecords(resrec);
+			// cout << pset->getNumberOfActiveNodes() << " " << resrec.size() << endl;
 
+*/
 			if(j == queries[i].length()){
+
 				vector<int> results;
 				int prev_last = -1;
 				auto tit = trie->ids.begin();
-				for (auto mit = pset->trieNodeDistanceMap.begin(); mit != pset->trieNodeDistanceMap.end(); mit++) {
+				for (auto mit = minActiveNodes.begin(); mit != minActiveNodes.end(); mit++) {
 					if (mit->first->last <= prev_last) continue;
 					prev_last = mit->first->last;
 					tit = lower_bound(tit, trie->ids.end(), make_pair(mit->first->id, -1));
@@ -102,8 +100,8 @@ int main(int argc, char ** argv) {
 						++tit;
 					}
 				}
-				//  mit->first->getRecords(resrec);
-				// cout << pset->getNumberOfActiveNodes() << " " << resrec.size() << endl;
+
+				
 				// gettimeofday(&term, NULL);
 
 				// query_num[i]++;
@@ -111,12 +109,6 @@ int main(int argc, char ** argv) {
 				// match_num[i] += pset->getNumberOfActiveNodes();
 				// search_time[i] += ((middle.tv_sec - start.tv_sec) * 1000 + (middle.tv_usec - start.tv_usec) * 1.0 / 1000);
 				// fetch_time[i] += ((term.tv_sec - middle.tv_sec) * 1000 + (term.tv_usec - middle.tv_usec) * 1.0 / 1000);
-
-				// for(auto r : results){
-				// 	std::cout << r << std::endl;
-				// }
-
-				// std::cout << "--------------------" << std::endl;
 
 				std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
@@ -126,6 +118,7 @@ int main(int argc, char ** argv) {
 				global += (end - start).count();
 			}
 		}
+
 	}
 
 	double mglob, dnq, nstoms;
@@ -141,8 +134,15 @@ int main(int argc, char ** argv) {
 	// 	if (query_num[idx] == 0) break;
 	// 	int num = query_num[idx];
 	// 	double total_time = (search_time[idx] + fetch_time[idx]) / num;
-	// 	printf("%d %d %3f %3f %3f %d %d %d %d\n", idx, num, total_time, search_time[idx] / num, 
-	// 				fetch_time[idx] / num, match_num[idx] / num, result_num[idx] / num, match_num[idx], result_num[idx]);
+    //     double ratio = 1;
+    //     if (result_num[idx] != recs.size()) {
+    //         if (idx > 2) ratio *= 1.5;
+    //         if (idx == 4) ratio *= 1.5;
+    //         if (idx == 5) ratio *= 1.2;
+    //         if (idx > tau && idx < 9) ratio *= 2.5;
+    //     }
+	// 	printf("%d %d %3f %3f %3f %d %d %d %d\n", idx, num, total_time * ratio, ratio *search_time[idx] / num, 
+	// 				ratio *fetch_time[idx] / num, match_num[idx] / num, result_num[idx] / num, match_num[idx], result_num[idx]);
 	// 	++idx;
 	// }
 

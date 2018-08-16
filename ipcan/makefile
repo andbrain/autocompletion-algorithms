@@ -1,6 +1,6 @@
 COMPILER = g++
 CCFLAGS = -O3 -std=c++11
-METHOD = ican
+METHOD = ipcan
 ALLOBJECTS = main.o Trie.o ActiveNode.o
 
 all: $(METHOD)
