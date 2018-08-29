@@ -414,9 +414,9 @@ int main(int argc, char ** argv) {
 
 				// timetotal += (term.tv_sec - start.tv_sec) * 1000000 + (term.tv_usec - start.tv_usec);
 
-				for(auto r : results){
-					cout << r << "  ";
-				}
+				// for(auto r : results){
+				// 	cout << r << "  ";
+				// }
 
 			
 

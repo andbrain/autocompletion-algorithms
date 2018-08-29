@@ -84,8 +84,9 @@ void running_test_mode(SearcherBase* searcher,
                        int prefixlen = -1){
   char line[256];
   smart_fetch_count = num_results = num_actives = stupid_fetch_count = 0;
-  for (vector<string >::iterator it = queryset.begin();
-       it != queryset.end(); it ++) {
+  for (vector<string >::iterator it = queryset.begin(); it != queryset.end(); it ++) {
+
+    std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
     strcpy(line, (*it).c_str());
     if (prefixlen > 0){
       line[prefixlen]='\0';
@@ -100,7 +101,6 @@ void running_test_mode(SearcherBase* searcher,
     searcher->ResetSearcher();
     searcher->ExtendQuery(line, strlen(line));
 
-    std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
     
     query_timer.Restart();
     searcher->ProcessAll(false);
@@ -120,15 +120,22 @@ void running_test_mode(SearcherBase* searcher,
       smarter_timer.Finish();      
     }    
 
+    
+    //searcher->ResultsStatistic(cout, false, false);
+    num_results += searcher->result_set_.size();
+    num_actives += searcher->current_active_.size();  
+
+    std::cout << searcher->result_set_.size() << std::endl;;
+    for(auto r : searcher->result_set_.result_ids_){
+      std::cout << r << "  ";
+    }
+
+
     std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
     std::cout << "[LOG] Query performed in " << (endt - startt).count() << "ns" << std::endl;
 
-    global += (endt - startt).count();
-    
-    //searcher->ResultsStatistic(cout, false, false);
-    num_results += searcher->result_set_.size();
-    num_actives += searcher->current_active_.size();    
+    global += (endt - startt).count();  
   }
 }
 
