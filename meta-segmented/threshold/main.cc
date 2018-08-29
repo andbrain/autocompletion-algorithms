@@ -20,6 +20,10 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include <chrono>
 #include <stdlib.h>
 #include <cassert>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 #define MAXIMUM 0x7fffffff
 
@@ -234,8 +238,15 @@ int main(int argc, char ** argv) {
 	// construct trie index
 	cerr << "#  Construct Index :" << endl;
 	Trie* trie = new Trie();
-	for (auto i = 0; i < recs.size(); i++)
-	  trie->append(recs[i].c_str(), i);
+	for (auto i = 0; i < recs.size(); i++){
+		
+		std::stringstream queryStream(recs[i]);
+		std::string currentWord;
+
+		while (std::getline(queryStream, currentWord, ' ')) {
+	  		trie->append(currentWord.c_str(), i);
+		}
+	}
 	trie->buildIdx();
 	trie->bfsIndex();
 
@@ -248,204 +259,211 @@ int main(int argc, char ** argv) {
 	for (auto i = 0; i < queries.size(); i++) {
 
 		
-
-		MTrie* mtrie = new MTrie(tau);
-		mtrie->root->insertChild(trie->root, make_pair(0,0));
-
 		/*printf("============================\n");
 		printf("\n%s\n", queries[i].c_str());
 		printf("============================\n");*/
 
+		unordered_set<int> results;
+
 		tt = 0;
-			std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::nanoseconds startt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+		std::stringstream queryStream(queries[i]);
+		std::string currentWord;
+
+		while (std::getline(queryStream, currentWord, ' ')) {
+
+			MTrie* mtrie = new MTrie(tau);
+			mtrie->root->insertChild(trie->root, make_pair(0,0));
 		
-        vector<MTrieNode*> trash;
-		for (auto j = 1; j <= queries[i].length(); j++) {
 
-			// timeval start, middle, term;
-			// gettimeofday(&start, NULL);
+			vector<MTrieNode*> trash;
+			for (auto j = 1; j <= currentWord.length(); j++) {
 
-			queue<MTrieNode*> q;  // mnode
-			char ch = queries[i][j - 1];     // current key stroke
+				// timeval start, middle, term;
+				// gettimeofday(&start, NULL);
 
-			// Get the list of Mnodes;
-			vector<pair<MTrieNode*, pair<int, int>>> v; // all the mnodes <first_level, last_level>, BFS;
-			queue<pair<MTrieNode*, int>> qp;  // <mnode, last_level>
-			qp.push(make_pair(mtrie->root, -1));
-			rmap.clear();
-			while (!qp.empty()) {
-				qp.front().first->opt = make_pair(-32767, 0);
-				rmap[qp.front().first->tnode] = qp.front().first;
-				int parent_last_level = qp.front().second;
-				MTrieNode* cnode = qp.front().first->child;
-				qp.pop();
-				while (cnode) {
-					int first_level = max(cnode->tnode->depth + 1, parent_last_level + 1);
-					int last_level = cnode->tnode->depth + 1;
-					for (; last_level <= cnode->tnode->depth + tau + 1; ++last_level) {
-						int themin = tau + 1;
-						for (auto qit = cnode->eds.begin(); qit != cnode->eds.end(); ++qit) {  // <row, ed>
-							if (themin > qit->second + max(j - 1 - qit->first, last_level - 1 - cnode->tnode->depth))
-							  themin = qit->second + max(j - 1 - qit->first, last_level - 1 - cnode->tnode->depth);
-						}
-						if (themin > tau) break;
-					}
-					v.push_back(make_pair(cnode, make_pair(first_level, last_level - 1)));
-					qp.push(make_pair(cnode, last_level - 1));
-					cnode = cnode->next;
-				}
-			}
+				queue<MTrieNode*> q;  // mnode
+				char ch = currentWord[j - 1];     // current key stroke
 
-			// printf("%d\n", (int)v.size());
-			
-
-			for (auto pmnode = v.begin(); pmnode != v.end(); ++pmnode) {
-				MTrieNode* node = pmnode->first;
-				for (int depth = pmnode->second.first; depth <= pmnode->second.second; ++depth) {
-					vector<TrieNode*> &vec = trie->index[ch][depth];
-					auto vit = lower_bound(vec.begin(), vec.end(), node->tnode->id, comp_id);
-                    bs_num[j]++;
-					int themin = tau + 1;
-					for (auto qit = node->eds.begin(); qit != node->eds.end(); ++qit) {  // <row, ed>
-						if (j == qit->first) continue;
-						if (themin > qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth))
-						  themin = qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth);
-					}
-					timeval S, T;
-					// gettimeofday(&S, NULL);
-					quickFind(vit, vec.end(), node, themin, j);
-					// gettimeofday(&T, NULL);
-					qf_time[j] += ((T.tv_sec - S.tv_sec) * 1000 + (T.tv_usec - S.tv_usec) * 1.0 / 1000);
-				}
-			}
-
-			if (j == queries[i].length()){
-				
-				q.push(mtrie->root);
-				while (!q.empty()) {
-					MTrieNode* node = q.front();
-					MTrieNode* cnode = node->child;
-					q.pop();
-					MTrieNode* pnode = NULL;
+				// Get the list of Mnodes;
+				vector<pair<MTrieNode*, pair<int, int>>> v; // all the mnodes <first_level, last_level>, BFS;
+				queue<pair<MTrieNode*, int>> qp;  // <mnode, last_level>
+				qp.push(make_pair(mtrie->root, -1));
+				rmap.clear();
+				while (!qp.empty()) {
+					qp.front().first->opt = make_pair(-32767, 0);
+					rmap[qp.front().first->tnode] = qp.front().first;
+					int parent_last_level = qp.front().second;
+					MTrieNode* cnode = qp.front().first->child;
+					qp.pop();
 					while (cnode) {
-						if (cnode->eds.back().first == j) {
-							pair<int, int> match = cnode->eds.back();
-							cnode->eds.pop_back();
-							while (!cnode->eds.empty() && match.second <= cnode->eds.back().second)
-							cnode->eds.pop_back();
-							cnode->eds.push_back(match);
-						}
-						int pop_num = 0;
-						for (auto qit = cnode->eds.begin(); qit != cnode->eds.end(); ++qit) {
-							if (j - qit->first + qit->second > tau ||
-								node->opt.second + cnode->tnode->depth - node->opt.first <= qit->second)
-							++pop_num;
-							else break;
-						}
-						if (pop_num == cnode->eds.size()) {
-							// remove the cnode
-							trash.push_back(cnode);
-							MTrieNode* ccnode = cnode->child;
-							if (ccnode == NULL) {
-								if (pnode == NULL) {
-									node->child = cnode->next;
-								} else {
-									pnode->next = cnode->next;
-									// TODO delete the pointer
-								}
-								cnode = cnode->next;
-							} else {
-								while (true) {
-									ccnode->parent = node;
-									if (ccnode->next == NULL) break;
-									ccnode = ccnode->next;
-								}
-								ccnode->next = cnode->next;
-								if (pnode == NULL) {
-									node->child = cnode->child;
-								} else {
-									pnode->next = cnode->child;
-								}
-								cnode = cnode->child;
+						int first_level = max(cnode->tnode->depth + 1, parent_last_level + 1);
+						int last_level = cnode->tnode->depth + 1;
+						for (; last_level <= cnode->tnode->depth + tau + 1; ++last_level) {
+							int themin = tau + 1;
+							for (auto qit = cnode->eds.begin(); qit != cnode->eds.end(); ++qit) {  // <row, ed>
+								if (themin > qit->second + max(j - 1 - qit->first, last_level - 1 - cnode->tnode->depth))
+								themin = qit->second + max(j - 1 - qit->first, last_level - 1 - cnode->tnode->depth);
 							}
-						} else {
-							while (--pop_num >= 0) cnode->eds.pop_front();
-							q.push(cnode);
-							pnode = cnode;
-							cnode = cnode->next;
+							if (themin > tau) break;
+						}
+						v.push_back(make_pair(cnode, make_pair(first_level, last_level - 1)));
+						qp.push(make_pair(cnode, last_level - 1));
+						cnode = cnode->next;
+					}
+				}
+
+				// printf("%d\n", (int)v.size());
+				
+
+				for (auto pmnode = v.begin(); pmnode != v.end(); ++pmnode) {
+					MTrieNode* node = pmnode->first;
+					for (int depth = pmnode->second.first; depth <= pmnode->second.second; ++depth) {
+						vector<TrieNode*> &vec = trie->index[ch][depth];
+						auto vit = lower_bound(vec.begin(), vec.end(), node->tnode->id, comp_id);
+						bs_num[j]++;
+						int themin = tau + 1;
+						for (auto qit = node->eds.begin(); qit != node->eds.end(); ++qit) {  // <row, ed>
+							if (j == qit->first) continue;
+							if (themin > qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth))
+							themin = qit->second + max(j - 1 - qit->first, depth - 1 - node->tnode->depth);
+						}
+						timeval S, T;
+						// gettimeofday(&S, NULL);
+						quickFind(vit, vec.end(), node, themin, j);
+						// gettimeofday(&T, NULL);
+						qf_time[j] += ((T.tv_sec - S.tv_sec) * 1000 + (T.tv_usec - S.tv_usec) * 1.0 / 1000);
+					}
+				}
+
+				if (j == currentWord.length()){
+					
+					q.push(mtrie->root);
+					while (!q.empty()) {
+						MTrieNode* node = q.front();
+						MTrieNode* cnode = node->child;
+						q.pop();
+						MTrieNode* pnode = NULL;
+						while (cnode) {
+							if (cnode->eds.back().first == j) {
+								pair<int, int> match = cnode->eds.back();
+								cnode->eds.pop_back();
+								while (!cnode->eds.empty() && match.second <= cnode->eds.back().second)
+								cnode->eds.pop_back();
+								cnode->eds.push_back(match);
+							}
+							int pop_num = 0;
+							for (auto qit = cnode->eds.begin(); qit != cnode->eds.end(); ++qit) {
+								if (j - qit->first + qit->second > tau ||
+									node->opt.second + cnode->tnode->depth - node->opt.first <= qit->second)
+								++pop_num;
+								else break;
+							}
+							if (pop_num == cnode->eds.size()) {
+								// remove the cnode
+								trash.push_back(cnode);
+								MTrieNode* ccnode = cnode->child;
+								if (ccnode == NULL) {
+									if (pnode == NULL) {
+										node->child = cnode->next;
+									} else {
+										pnode->next = cnode->next;
+										// TODO delete the pointer
+									}
+									cnode = cnode->next;
+								} else {
+									while (true) {
+										ccnode->parent = node;
+										if (ccnode->next == NULL) break;
+										ccnode = ccnode->next;
+									}
+									ccnode->next = cnode->next;
+									if (pnode == NULL) {
+										node->child = cnode->child;
+									} else {
+										pnode->next = cnode->child;
+									}
+									cnode = cnode->child;
+								}
+							} else {
+								while (--pop_num >= 0) cnode->eds.pop_front();
+								q.push(cnode);
+								pnode = cnode;
+								cnode = cnode->next;
+							}
 						}
 					}
-				}
 
-				// gettimeofday(&middle, NULL);
+					// gettimeofday(&middle, NULL);
 
-				vector<TrieNode*> m_nodes;
-				MTrieNode* cnode = mtrie->root->child;
-				while (cnode) {
-					m_nodes.push_back(cnode->tnode);
-					cnode = cnode->next;
-				}
-				sort(m_nodes.begin(), m_nodes.end(), comp_node);
-				vector<int> results;
-				int prev_last = -1;
-				auto tit = trie->ids.begin();
-				for (auto vit = m_nodes.begin(); vit != m_nodes.end(); vit++) {
-					if ((*vit)->last <= prev_last) continue;
-					prev_last = (*vit)->last;
-					tit = lower_bound(tit, trie->ids.end(), (*vit)->id, comp_lower);
-					while (tit != trie->ids.end() && tit->first <= (*vit)->last) {
-						results.push_back(tit->second);
-						++tit;
+					vector<TrieNode*> m_nodes;
+					MTrieNode* cnode = mtrie->root->child;
+					while (cnode) {
+						m_nodes.push_back(cnode->tnode);
+						cnode = cnode->next;
 					}
+					sort(m_nodes.begin(), m_nodes.end(), comp_node);
+					
+					int prev_last = -1;
+					auto tit = trie->ids.begin();
+					for (auto vit = m_nodes.begin(); vit != m_nodes.end(); vit++) {
+						if ((*vit)->last <= prev_last) continue;
+						prev_last = (*vit)->last;
+						tit = lower_bound(tit, trie->ids.end(), (*vit)->id, comp_lower);
+						while (tit != trie->ids.end() && tit->first <= (*vit)->last) {
+							results.insert(tit->second);
+							++tit;
+						}
+					}
+					//  printResults(queries[i], j, results);
+					// end output results
+
+
+					// gettimeofday(&term, NULL);
+
+					
+
+					// query_num[j]++;
+					// match_num[j] += m_nodes.size();
+					// result_num[j] += results.size();
+					// search_time[j] += ((middle.tv_sec - start.tv_sec) * 1000 + (middle.tv_usec - start.tv_usec) * 1.0 / 1000);
+					// fetch_time[j] += ((term.tv_sec - middle.tv_sec) * 1000 + (term.tv_usec - middle.tv_usec) * 1.0 / 1000);
+
+					// timetotal += (term.tv_sec - start.tv_sec) * 1000000 + (term.tv_usec - start.tv_usec);
+
+					
+					//  printf("Time: %ld  Result Num: %d  Nodes Num: %d  Match Num: %d\n", (term.tv_sec - start.tv_sec) * 1000000 +
+					//  			(term.tv_usec - start.tv_usec), (int)results.size(), (int)v.size(), (int)m_nodes.size());
+					
+					
+					// /*for (auto ait = agg.begin(); ait != agg.end(); ++ait) {
+					// printf("Depth: %d", ait->first->depth);
+					// for (auto qit = ait->second.begin(); qit != ait->second.end(); ++qit)
+					// printf(" <%d %d> ", qit->first, qit->second);
+					// cout << endl;
+					// }*/
+					
 				}
-				//  printResults(queries[i], j, results);
-				// end output results
-
-
-				// gettimeofday(&term, NULL);
-
-				
-
-				// query_num[j]++;
-				// match_num[j] += m_nodes.size();
-				// result_num[j] += results.size();
-				// search_time[j] += ((middle.tv_sec - start.tv_sec) * 1000 + (middle.tv_usec - start.tv_usec) * 1.0 / 1000);
-				// fetch_time[j] += ((term.tv_sec - middle.tv_sec) * 1000 + (term.tv_usec - middle.tv_usec) * 1.0 / 1000);
-
-				// timetotal += (term.tv_sec - start.tv_sec) * 1000000 + (term.tv_usec - start.tv_usec);
-
-				for(auto r : results){
-					cout << r << "  ";
-				}
-
 			
-
-				std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-				tt += (endt - startt).count();
-
-				cout << "search time " << i+1 << " = " << tt << endl;
-				// globalTime += timetotal;
-				globalTime2 += tt;
-
-				
-				//  printf("Time: %ld  Result Num: %d  Nodes Num: %d  Match Num: %d\n", (term.tv_sec - start.tv_sec) * 1000000 +
-				//  			(term.tv_usec - start.tv_usec), (int)results.size(), (int)v.size(), (int)m_nodes.size());
-				
-				
-				// /*for (auto ait = agg.begin(); ait != agg.end(); ++ait) {
-				// printf("Depth: %d", ait->first->depth);
-				// for (auto qit = ait->second.begin(); qit != ait->second.end(); ++qit)
-				// printf(" <%d %d> ", qit->first, qit->second);
-				// cout << endl;
-				// }*/
-				
+			}
+			delete mtrie;
+			for (auto& t : trash) {
+				t->next = t->child = NULL;
+				delete t;
 			}
 		}
-        delete mtrie;
-        for (auto& t : trash) {
-            t->next = t->child = NULL;
-            delete t;
-        }
+
+		for(auto r : results){
+			cout << r << "  ";
+		}
+
+		std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+		tt += (endt - startt).count();
+
+		cout << "search time " << i+1 << " = " << tt << endl;
+		// globalTime += timetotal;
+		globalTime2 += tt;
 	}
 	
 	
