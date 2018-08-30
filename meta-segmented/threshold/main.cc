@@ -412,7 +412,7 @@ int main(int argc, char ** argv) {
 						prev_last = (*vit)->last;
 						tit = lower_bound(tit, trie->ids.end(), (*vit)->id, comp_lower);
 						while (tit != trie->ids.end() && tit->first <= (*vit)->last) {
-							results.insert(tit->second);
+							results.emplace(tit->second);
 							++tit;
 						}
 					}
@@ -454,9 +454,9 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-		for(auto r : results){
-			cout << r << "  ";
-		}
+//		for(auto r : results){
+//			cout << r << "  ";
+//		}
 
 		std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 		tt += (endt - startt).count();
