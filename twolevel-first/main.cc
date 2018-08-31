@@ -274,7 +274,7 @@ int main(int argc, char ** argv) {
 
 				std::string item = m_table[found];
 
-				int distanceTotal = INT_MAX;
+				// int distanceTotal = INT_MAX;
 
 				for(int j = 1; j < queryWords.size(); j++){
 
@@ -282,7 +282,7 @@ int main(int argc, char ** argv) {
 					std::stringstream itemStream(item); // item of the current occurence
 					while(std::getline(itemStream, currentItemWord, ' ')){ // currentItemWord
 					
-						int distance = INT_MAX;
+						int distance = 999999;
 
 						int abs = currentItemWord.size() - queryWords[j].size();
 
