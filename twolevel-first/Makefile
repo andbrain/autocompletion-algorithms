@@ -1,32 +1,21 @@
-### C++ Arguments
-CC=g++
-CF=-std=c++14 -Wall -O2
+COMPILER = g++
+CCFLAGS = -O3 -std=c++11
+METHOD = ican
+ALLOBJECTS = main.o Trie.o ActiveNode.o
 
-### Program Arguments
-NAME=twoltrie
+all: $(METHOD)
 
-### Compiler Arguments
-SRC_P=src
+$(METHOD) : $(ALLOBJECTS)
+	${COMPILER} ${CCFLAGS} $(ADDFLAGS) -o $(METHOD) $(ALLOBJECTS)
 
-all: merge clean
+main.o: main.cc Trie.o ActiveNode.o
+	${COMPILER} ${CCFLAGS} $(ADDFLAGS) -c main.cc
 
-merge:	twoltrie.o trie.o trieNode.o occurrence.o itemTable.o
-	$(CC) $(CF) -o $(NAME) trie.o trieNode.o main.o occurrence.o itemTable.o
+ActiveNode.o: ActiveNode.h ActiveNode.cc Trie.o
+	${COMPILER} ${CCFLAGS} $(ADDFLAGS) -c ActiveNode.cc
 
-twoltrie.o: trie.o $(SRC_P)/main.cpp
-	$(CC) $(CF) -c $(SRC_P)/main.cpp
-
-trie.o: trieNode.o itemTable.o $(SRC_P)/trie.cpp $(SRC_P)/trie.hpp
-	$(CC) $(CF) -c $(SRC_P)/trie.cpp
-
-trieNode.o: occurrence.o $(SRC_P)/trieNode.cpp $(SRC_P)/trieNode.hpp
-	$(CC) $(CF) -c $(SRC_P)/trieNode.cpp
-
-itemTable.o: $(SRC_P)/itemTable.cpp $(SRC_P)/itemTable.hpp
-	$(CC) $(CF) -c $(SRC_P)/itemTable.cpp
-
-occurrence.o: $(SRC_P)/occurrence.cpp $(SRC_P)/occurrence.hpp
-	$(CC) $(CF) -c $(SRC_P)/occurrence.cpp
+Trie.o: Trie.cc Trie.h
+	${COMPILER} ${CCFLAGS} $(ADDFLAGS) -c Trie.cc
 
 clean:
-	rm -rf *.o
+	rm -f $(METHOD) *.o

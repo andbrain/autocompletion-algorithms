@@ -38,6 +38,13 @@
         "tuple": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp",
+        "cstddef": "cpp",
+        "algorithm": "cpp",
+        "hashtable": "cpp",
+        "iterator": "cpp",
+        "memory": "cpp"
     }
 }
