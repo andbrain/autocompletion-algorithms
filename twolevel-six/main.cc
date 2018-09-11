@@ -176,6 +176,7 @@ int main(int argc, char ** argv) {
 	string filename = string(argv[1]);
 	string queryfile = string(argv[2]);
 	const int tau = atoi(argv[3]);
+	const int tok = atoi(argv[4])
 
 	// int maxPrefix = 1000;
 	// double search_time[maxPrefix];
@@ -195,8 +196,8 @@ int main(int argc, char ** argv) {
 		
 		
 		std::string item = recs[i];
-		std::string firstWord = item.substr(0,6);
-		std::string strToTable = item.erase(0,6);
+		std::string firstWord = item.substr(0,tok);
+		std::string strToTable = item.erase(0,tok);
 
 
 		m_table.emplace(i, strToTable); 
@@ -212,8 +213,8 @@ int main(int argc, char ** argv) {
 		vector<int> results;
 
 		std::string queryStr = queries[i];
-		std::string firstWordQuery = queryStr.substr(0,6);
-		std::string secondQuery = queryStr.erase(0,6);
+		std::string firstWordQuery = queryStr.substr(0,tok);
+		std::string secondQuery = queryStr.erase(0,tok);
 
 		if(firstWordQuery.size() > 0){
 
@@ -288,7 +289,7 @@ int main(int argc, char ** argv) {
 
 		}
 
-		if(secondQuery.size() > 0){
+/*		if(secondQuery.size() > 0){
 			cout << "second: ";
 			for(auto r : newResults){
 				cout << r << "  ";
@@ -300,7 +301,7 @@ int main(int argc, char ** argv) {
 				cout << r << "  ";
 			}
 		}
-
+*/
 		std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
 		nq++;
