@@ -176,7 +176,11 @@ int main(int argc, char ** argv) {
 	string filename = string(argv[1]);
 	string queryfile = string(argv[2]);
 	const int tau = atoi(argv[3]);
-	const int tok = atoi(argv[4])
+	int tok;
+	if(argc > 4){
+		tok = atoi(argv[4]);
+	}
+
 
 	// int maxPrefix = 1000;
 	// double search_time[maxPrefix];
@@ -190,6 +194,18 @@ int main(int argc, char ** argv) {
 
 	readData(filename, recs);
 	readData(queryfile, queries);
+
+	if(argc < 5){
+		int countSize = 0;
+		for (auto i = 0; i < recs.size(); i++){
+			auto words = explode(recs[i], ' ');
+			countSize += words[0].size();
+		}
+
+		tok = countSize/recs.size();
+
+		cout << " TOK : " << tok << endl;
+	}
 
 	Trie<char>* trie = new Trie<char>();
 	for (auto i = 0; i < recs.size(); i++){
@@ -289,7 +305,7 @@ int main(int argc, char ** argv) {
 
 		}
 
-/*		if(secondQuery.size() > 0){
+		if(secondQuery.size() > 0){
 			cout << "second: ";
 			for(auto r : newResults){
 				cout << r << "  ";
@@ -301,7 +317,7 @@ int main(int argc, char ** argv) {
 				cout << r << "  ";
 			}
 		}
-*/
+
 		std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
 		nq++;
