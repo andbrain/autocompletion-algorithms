@@ -190,7 +190,13 @@ int main(int argc, char ** argv) {
 	// int query_num[maxPrefix];
 
 	long long global = 0.0;
+	long long globalFirst = 0.0;
+	long long globalSecond = 0.0;
     int nq = 0;
+    int nqSecond = 0;
+	int nResultsFirst = 0;
+	int nResultsFinal = 0;
+	int nTotal = 0;
 
 	readData(filename, recs);
 	readData(queryfile, queries);
@@ -221,6 +227,9 @@ int main(int argc, char ** argv) {
 	}
 	trie->buildIdx();
 	// finished indexing
+
+
+	nTotal = m_table.size();
 
 	for (auto i = 0; i < queries.size(); i++) {
 
@@ -272,12 +281,11 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-
+		std::chrono::nanoseconds endFirst = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
 		//second level
 		vector<int> newResults;
 		if(secondQuery.size() > 0){
-
 
 			for(int found : results){
 
@@ -305,34 +313,64 @@ int main(int argc, char ** argv) {
 
 		}
 
-		if(secondQuery.size() > 0){
-			cout << "second: ";
-			for(auto r : newResults){
-				cout << r << "  ";
-			}
-		}
-		else{
-			cout << "first: ";
-			for(auto r : results){
-				cout << r << "  ";
-			}
-		}
+
+		// if(secondQuery.size() > 0){
+		// 	cout << "second: ";
+		// 	for(auto r : newResults){
+		// 		cout << r << "  ";
+		// 	}
+		// }
+		// else{
+		// 	cout << "first: ";
+		// 	for(auto r : results){
+		// 		cout << r << "  ";
+		// 	}
+		// }
 
 		std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
+		cout << " sdfsf "<< results.size() << endl;
+		
+		nResultsFirst += results.size();
+		nResultsFinal += newResults.size();
+
 		nq++;
-		std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
+		std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns  -  " << (results.size()*100) / nTotal << "%" << std::endl;
 
 		global += (end - start).count();
+		globalFirst += (endFirst - start).count();
+
+		if(secondQuery.size() > 0){
+			nqSecond++;
+			globalSecond += (end - endFirst).count();
+		}
 	}
 
-	double mglob, dnq, nstoms;
+	double mglob, mFirst, mSecond, dnq, dnqSecond, nstoms, dnResultsFirst, dnResultsSecond, percBase, percSec;
     mglob = global;
+	mFirst = globalFirst;
+	mSecond = globalSecond;
     dnq = nq;
+	dnqSecond = nqSecond;
     nstoms = 1000000;
 
+	dnResultsFirst = nResultsFirst / dnq;
+	dnResultsSecond = nResultsFinal / dnq;
+
+	percBase = (100 * dnResultsFirst) / nTotal;
+	percSec = (100 * dnResultsSecond) / dnResultsFirst;
+	
+
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
+	std::cout << "[LOG] GLOBAL FIRST " << globalFirst << " ns" << std::endl;
+	std::cout << "[LOG] GLOBAL SECOND " << globalSecond << " ns" << std::endl << std::endl;
+	
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+    std::cout << "[LOG] MEDIA FIRST " << mFirst/(dnq*nstoms) << " ms" << std::endl;
+    std::cout << "[LOG] MEDIA SECOND " << mSecond/(dnqSecond*nstoms) << " ms" << std::endl << std::endl;
+
+    std::cout << "[LOG] MEDIA RESULTS FIRST LEVEL " << dnResultsFirst << " - " << percBase << "%" << std::endl;
+    std::cout << "[LOG] MEDIA RESULTS SECOND LEVEL " << dnResultsSecond << " - " << percSec << "%" << std::endl;
 
 	// int idx = 0;
 	// while (true) {
