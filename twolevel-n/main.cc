@@ -24,6 +24,9 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include <unordered_map>
 #include <unordered_set>
 #include <chrono>
+#include <iterator>
+#include <numeric>
+#include <vector>
 #include <stdlib.h>
 
 
@@ -77,6 +80,8 @@ unsigned int editDistance(const std::string& s1, const std::string &s2){
     col.swap(prevCol);
   }  return prevCol[len2];
 }
+
+
 
 // std::vector<Occurrence_t> Trie_t::searchSecondLevel(std::vector<Occurrence_t>& fuzzyWords, const std::string& realQuery){
 
@@ -219,10 +224,11 @@ int main(int argc, char ** argv) {
 		
 		std::string item = recs[i];
 		std::string firstWord = item.substr(0,tok);
-		std::string strToTable = item.erase(0,tok);
+		// std::string strToTable = item.erase(0,tok);
 
 
-		m_table.emplace(i, strToTable); 
+		// m_table.emplace(i, strToTable); 
+		m_table.emplace(i, item); 
 		trie->append(firstWord.c_str(), i);
 	}
 	trie->buildIdx();
@@ -239,7 +245,8 @@ int main(int argc, char ** argv) {
 
 		std::string queryStr = queries[i];
 		std::string firstWordQuery = queryStr.substr(0,tok);
-		std::string secondQuery = queryStr.erase(0,tok);
+		// std::string secondQuery = queryStr.erase(0,tok);
+		std::string secondQuery = queryStr;
 
 		if(firstWordQuery.size() > 0){
 
@@ -272,6 +279,7 @@ int main(int argc, char ** argv) {
 						prev_last = mit->first->last;
 						tit = lower_bound(tit, trie->ids.end(), make_pair(mit->first->id, -1));
 						while (tit != trie->ids.end() && tit->first <= mit->first->last) {
+							// cout << "AQUI OH >>>> " << tit->first << " , " << tit->second << endl;
 							results.push_back(tit->second);
 							++tit;
 						}
@@ -294,13 +302,15 @@ int main(int argc, char ** argv) {
 				// int distanceTotal = INT_MAX;
 
 
-				int distance = 999999;
+				int distance = tau + 10;
 
-				int abs = item.size() - secondQuery.size();
+				int sizeItem = item.size();
+				int sizeQuery = secondQuery.size();
 
-				for(int k = 0; k<abs; k++){
-					item.pop_back();
+				if(sizeItem > sizeQuery){
+					item = item.substr(0,sizeQuery);
 				}
+
 
 				distance = editDistance(secondQuery, item);
 			
@@ -329,7 +339,7 @@ int main(int argc, char ** argv) {
 
 		std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-		cout << " sdfsf "<< results.size() << endl;
+		// cout << " sdfsf "<< results.size() << endl;
 		
 		nResultsFirst += results.size();
 		nResultsFinal += newResults.size();
