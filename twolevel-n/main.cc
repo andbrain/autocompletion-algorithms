@@ -293,7 +293,8 @@ int main(int argc, char ** argv) {
 
 		//second level
 		vector<int> newResults;
-		if(secondQuery.size() > 0){
+
+		if(secondQuery.size() > tok){
 
 			for(int found : results){
 
