@@ -45,6 +45,8 @@
         "algorithm": "cpp",
         "hashtable": "cpp",
         "iterator": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp"
     }
 }

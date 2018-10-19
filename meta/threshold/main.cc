@@ -423,7 +423,7 @@ int main(int argc, char ** argv) {
 				std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 				tt += (endt - startt).count();
 
-				cout << "search time " << i+1 << " = " << tt << endl;
+				// cout << "search time " << i+1 << " = " << tt << endl;
 				// globalTime += timetotal;
 				globalTime2 += tt;
 
@@ -454,8 +454,10 @@ int main(int argc, char ** argv) {
     dnq = queries.size();
     nstoms = 1000000;
 
+	std::cout << endl << "META - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << globalTime2 << " ns" << std::endl;
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+	std::cout << "----------------------------------------------------------------------------------------------" << std::endl;
 	// cout << "Global time = " << globalTime2 << endl;
 	// cout << "Global time = " << globalTime << endl;
 

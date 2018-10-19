@@ -346,7 +346,7 @@ int main(int argc, char ** argv) {
 		nResultsFinal += newResults.size();
 
 		nq++;
-		std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns  -  " << (results.size()*100) / nTotal << "%" << std::endl;
+		// std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns  -  " << (results.size()*100) / nTotal << "%" << std::endl;
 
 		global += (end - start).count();
 		globalFirst += (endFirst - start).count();
@@ -372,6 +372,7 @@ int main(int argc, char ** argv) {
 	percSec = (100 * dnResultsSecond) / dnResultsFirst;
 	
 
+	std::cout << endl << "TWO LEVEL - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
 	std::cout << "[LOG] GLOBAL FIRST " << globalFirst << " ns" << std::endl;
 	std::cout << "[LOG] GLOBAL SECOND " << globalSecond << " ns" << std::endl << std::endl;
@@ -382,7 +383,7 @@ int main(int argc, char ** argv) {
 
     std::cout << "[LOG] MEDIA RESULTS FIRST LEVEL " << dnResultsFirst << " - " << percBase << "%" << std::endl;
     std::cout << "[LOG] MEDIA RESULTS SECOND LEVEL " << dnResultsSecond << " - " << percSec << "%" << std::endl;
-
+    std::cout << "----------------------------------------------------------------------------------------------" << std::endl;
 	// int idx = 0;
 	// while (true) {
 	// 	if (query_num[idx] == 0) break;

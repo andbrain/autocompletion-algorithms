@@ -125,7 +125,7 @@ int main(int argc, char ** argv) {
 				std::chrono::nanoseconds end = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
 				nq++;
-				std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
+				// std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
 
 				global += (end - start).count();
 			}
@@ -137,8 +137,11 @@ int main(int argc, char ** argv) {
     dnq = nq;
     nstoms = 1000000;
 
+
+	std::cout << endl << "ICAN - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+	std::cout << "----------------------------------------------------------------------------------------------" << std::endl;
 
 	// int idx = 0;
 	// while (true) {
