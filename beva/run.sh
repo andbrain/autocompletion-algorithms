@@ -12,7 +12,7 @@ if [ ! ${#} -eq "5" ];then
 fi
 
 DATA=$1
-RAWDATA=$1.words.txt
+RAWDATA=$1.txt
 MINT=$2
 MAXT=$3
 TSTEP=1
@@ -22,8 +22,8 @@ QRYSIZE=$5
 WORKDIR=`pwd`
 
 BINDIR="$WORKDIR/"
-DATADIR="$WORKDIR/data"
-QUERYDIR="$WORKDIR/data"
+DATADIR="../../${DATA}"
+QUERYDIR="../../${DATA}"
 RESULTDIR="$WORKDIR/lazyresults/query/"
 EDITDFADIR="$WORKDIR/eva_conf"
 mkdir -p ${RESULTDIR}/${DATA}/
@@ -31,7 +31,7 @@ mkdir -p ${RESULTDIR}/${DATA}/
 for((i=$MINT;i<=$MAXT;i=i+$TSTEP))
 do 
     echo "$ALGO, $DATA, $QRYNUM $q $i"
-    QUERYFILE="$QUERYDIR/$RAWDATA.$QRYSIZE.query.txt"
+    QUERYFILE="../../${DATA}/q$QRYSIZE.txt"
 
 
     head -n $QRYNUM $QUERYFILE | $BINDIR/searcher_base_test -t $i -d $DATADIR/$RAWDATA -a lazy_dfs  -u     -o eva    -f -k 1 1>/dev/null  2>${RESULTDIR}/${DATA}/$RAWDATA.lazy_dfs_u.t$i.com.log

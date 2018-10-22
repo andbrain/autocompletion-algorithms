@@ -23,7 +23,7 @@ def lazyDFS(params):
     print(f'[INFO] Reading Query {params["qryNumber"]}')
     for tau in range(params['mint'], params['maxt']+1):
 
-        fnameDfs = f'lazyresults/query/{params["dataset"]}/{params["dataset"]}.words.txt.lazy_dfs_u.t{tau}.com.log'
+        fnameDfs = f'lazyresults/query/{params["dataset"]}/{params["dataset"]}.txt.lazy_dfs_u.t{tau}.com.log'
         # print(f'[INFO] Reading {fnameDfs} for tau {tau}')
 
         with open(fnameDfs) as f:
