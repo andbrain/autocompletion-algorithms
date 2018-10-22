@@ -98,25 +98,25 @@ EOF
 for((i=3;i<=13;i=i+2))
 do 
     echo "ican - aol - q$i - tau:1"
-    ./ican ~/aol/aol.txt ~/aol/q$i.txt 1 >> ../result.txt
+    ./ipcan ~/aol/aol.txt ~/aol/q$i.txt 1 >> ../result.txt
 done
 
 for((i=3;i<=13;i=i+2))
 do 
     echo "ican - usaddr - q$i - tau:1"
-    ./ican ~/usaddr/usaddr.txt ~/usaddr/q$i.txt 1 >> ../result.txt
+    ./ipcan ~/usaddr/usaddr.txt ~/usaddr/q$i.txt 1 >> ../result.txt
 done
 
 for((i=1;i<=5;i=i+1))
 do 
     echo "ican - aol - q3 - tau:$i"
-    ./ican ~/aol/aol.txt ~/aol/q3_10.txt $i >> ../result.txt
+    ./ipcan ~/aol/aol.txt ~/aol/q3_10.txt $i >> ../result.txt
 done
 
 for((i=1;i<=5;i=i+1))
 do 
     echo "ican - usaddr - q3 - tau:$i"
-    ./ican ~/usaddr/usaddr.txt ~/usaddr/q3_10.txt $i >> ../result.txt
+    ./ipcan ~/usaddr/usaddr.txt ~/usaddr/q3_10.txt $i >> ../result.txt
 done
 
 cd ..
