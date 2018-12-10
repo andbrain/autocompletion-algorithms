@@ -1,0 +1,312 @@
+
+----------------------------------------------------------------------------------------------
+    TWO LEVEL
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 1 - QLENGHT: 5
+
+[LOG] GLOBAL 1854012938 ns
+[LOG] GLOBAL FIRST 1840855865 ns
+[LOG] GLOBAL SECOND 13157073 ns
+
+[LOG] MEDIA GLOBAL 1.85401 ms
+[LOG] MEDIA FIRST 1.84086 ms
+[LOG] MEDIA SECOND 0.0131571 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 103.556 - 0.0721187%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 1 - QLENGHT: 7
+
+[LOG] GLOBAL 1817871462 ns
+[LOG] GLOBAL FIRST 1803944598 ns
+[LOG] GLOBAL SECOND 13926864 ns
+
+[LOG] MEDIA GLOBAL 1.81787 ms
+[LOG] MEDIA FIRST 1.80394 ms
+[LOG] MEDIA SECOND 0.0139269 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 22.408 - 0.0156054%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 1 - QLENGHT: 9
+
+[LOG] GLOBAL 2116069505 ns
+[LOG] GLOBAL FIRST 1857888677 ns
+[LOG] GLOBAL SECOND 258180828 ns
+
+[LOG] MEDIA GLOBAL 2.11607 ms
+[LOG] MEDIA FIRST 1.85789 ms
+[LOG] MEDIA SECOND 0.258181 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 18.346 - 0.0127766%
+[LOG] MEDIA RESULTS SECOND LEVEL 10.397 - 56.6718%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 1 - QLENGHT: 11
+
+[LOG] GLOBAL 2139115768 ns
+[LOG] GLOBAL FIRST 1844560136 ns
+[LOG] GLOBAL SECOND 294555632 ns
+
+[LOG] MEDIA GLOBAL 2.13912 ms
+[LOG] MEDIA FIRST 1.84456 ms
+[LOG] MEDIA SECOND 0.294556 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 18.346 - 0.0127766%
+[LOG] MEDIA RESULTS SECOND LEVEL 4.522 - 24.6484%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 1 - QLENGHT: 13
+
+[LOG] GLOBAL 2195741609 ns
+[LOG] GLOBAL FIRST 1834779489 ns
+[LOG] GLOBAL SECOND 360962120 ns
+
+[LOG] MEDIA GLOBAL 2.19574 ms
+[LOG] MEDIA FIRST 1.83478 ms
+[LOG] MEDIA SECOND 0.360962 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 18.346 - 0.0127766%
+[LOG] MEDIA RESULTS SECOND LEVEL 2.855 - 15.562%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 2 - QLENGHT: 5
+
+[LOG] GLOBAL 32662291071 ns
+[LOG] GLOBAL FIRST 32647856234 ns
+[LOG] GLOBAL SECOND 14434837 ns
+
+[LOG] MEDIA GLOBAL 32.6623 ms
+[LOG] MEDIA FIRST 32.6479 ms
+[LOG] MEDIA SECOND 0.0144348 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 1119.78 - 0.779839%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 2 - QLENGHT: 7
+
+[LOG] GLOBAL 32446444679 ns
+[LOG] GLOBAL FIRST 32432678617 ns
+[LOG] GLOBAL SECOND 13766062 ns
+
+[LOG] MEDIA GLOBAL 32.4464 ms
+[LOG] MEDIA FIRST 32.4327 ms
+[LOG] MEDIA SECOND 0.0137661 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 59.892 - 0.0417101%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 2 - QLENGHT: 9
+
+[LOG] GLOBAL 33016527107 ns
+[LOG] GLOBAL FIRST 32557137974 ns
+[LOG] GLOBAL SECOND 459389133 ns
+
+[LOG] MEDIA GLOBAL 33.0165 ms
+[LOG] MEDIA FIRST 32.5571 ms
+[LOG] MEDIA SECOND 0.459389 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 29.591 - 0.0206078%
+[LOG] MEDIA RESULTS SECOND LEVEL 18.082 - 61.1064%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 2 - QLENGHT: 11
+
+[LOG] GLOBAL 32714037093 ns
+[LOG] GLOBAL FIRST 32195375016 ns
+[LOG] GLOBAL SECOND 518662077 ns
+
+[LOG] MEDIA GLOBAL 32.714 ms
+[LOG] MEDIA FIRST 32.1954 ms
+[LOG] MEDIA SECOND 0.518662 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 29.591 - 0.0206078%
+[LOG] MEDIA RESULTS SECOND LEVEL 8.828 - 29.8334%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 2 - QLENGHT: 13
+
+[LOG] GLOBAL 32708826370 ns
+[LOG] GLOBAL FIRST 32080510607 ns
+[LOG] GLOBAL SECOND 628315763 ns
+
+[LOG] MEDIA GLOBAL 32.7088 ms
+[LOG] MEDIA FIRST 32.0805 ms
+[LOG] MEDIA SECOND 0.628316 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 29.591 - 0.0206078%
+[LOG] MEDIA RESULTS SECOND LEVEL 4.065 - 13.7373%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 3 - QLENGHT: 5
+
+[LOG] GLOBAL 242177035478 ns
+[LOG] GLOBAL FIRST 242159283718 ns
+[LOG] GLOBAL SECOND 17751760 ns
+
+[LOG] MEDIA GLOBAL 242.177 ms
+[LOG] MEDIA FIRST 242.159 ms
+[LOG] MEDIA SECOND 0.0177518 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 3435.75 - 2.39273%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 3 - QLENGHT: 7
+
+[LOG] GLOBAL 243418887325 ns
+[LOG] GLOBAL FIRST 243404456983 ns
+[LOG] GLOBAL SECOND 14430342 ns
+
+[LOG] MEDIA GLOBAL 243.419 ms
+[LOG] MEDIA FIRST 243.404 ms
+[LOG] MEDIA SECOND 0.0144303 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 224.382 - 0.156265%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 3 - QLENGHT: 9
+
+[LOG] GLOBAL 247563157165 ns
+[LOG] GLOBAL FIRST 246472892416 ns
+[LOG] GLOBAL SECOND 1090264749 ns
+
+[LOG] MEDIA GLOBAL 247.563 ms
+[LOG] MEDIA FIRST 246.473 ms
+[LOG] MEDIA SECOND 1.09026 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 73.755 - 0.0513646%
+[LOG] MEDIA RESULTS SECOND LEVEL 24.081 - 32.65%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 3 - QLENGHT: 11
+
+[LOG] GLOBAL 243943873489 ns
+[LOG] GLOBAL FIRST 242652566740 ns
+[LOG] GLOBAL SECOND 1291306749 ns
+
+[LOG] MEDIA GLOBAL 243.944 ms
+[LOG] MEDIA FIRST 242.653 ms
+[LOG] MEDIA SECOND 1.29131 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 73.755 - 0.0513646%
+[LOG] MEDIA RESULTS SECOND LEVEL 10.602 - 14.3746%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/aol/aol.txt - ED: 3 - QLENGHT: 13
+
+[LOG] GLOBAL 243159959782 ns
+[LOG] GLOBAL FIRST 241557055613 ns
+[LOG] GLOBAL SECOND 1602904169 ns
+
+[LOG] MEDIA GLOBAL 243.16 ms
+[LOG] MEDIA FIRST 241.557 ms
+[LOG] MEDIA SECOND 1.6029 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 73.755 - 0.0513646%
+[LOG] MEDIA RESULTS SECOND LEVEL 4.398 - 5.96299%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 1 - QLENGHT: 5
+
+[LOG] GLOBAL 7120445523 ns
+[LOG] GLOBAL FIRST 7106947096 ns
+[LOG] GLOBAL SECOND 13498427 ns
+
+[LOG] MEDIA GLOBAL 7.12045 ms
+[LOG] MEDIA FIRST 7.10695 ms
+[LOG] MEDIA SECOND 0.0134984 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 5842.41 - 0.0569929%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 1 - QLENGHT: 7
+
+[LOG] GLOBAL 6779280304 ns
+[LOG] GLOBAL FIRST 6763983095 ns
+[LOG] GLOBAL SECOND 15297209 ns
+
+[LOG] MEDIA GLOBAL 6.77928 ms
+[LOG] MEDIA FIRST 6.76398 ms
+[LOG] MEDIA SECOND 0.0152972 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 2064.93 - 0.0201435%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 1 - QLENGHT: 9
+
+[LOG] GLOBAL 33345519604 ns
+[LOG] GLOBAL FIRST 7363730705 ns
+[LOG] GLOBAL SECOND 25981788899 ns
+
+[LOG] MEDIA GLOBAL 33.3455 ms
+[LOG] MEDIA FIRST 7.36373 ms
+[LOG] MEDIA SECOND 25.9818 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 1686.68 - 0.0164537%
+[LOG] MEDIA RESULTS SECOND LEVEL 536.435 - 31.8041%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 1 - QLENGHT: 11
+
+[LOG] GLOBAL 36770977722 ns
+[LOG] GLOBAL FIRST 7330197772 ns
+[LOG] GLOBAL SECOND 29440779950 ns
+
+[LOG] MEDIA GLOBAL 36.771 ms
+[LOG] MEDIA FIRST 7.3302 ms
+[LOG] MEDIA SECOND 29.4408 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 1686.68 - 0.0164537%
+[LOG] MEDIA RESULTS SECOND LEVEL 229.913 - 13.6311%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 1 - QLENGHT: 13
+
+[LOG] GLOBAL 42512451549 ns
+[LOG] GLOBAL FIRST 7274484830 ns
+[LOG] GLOBAL SECOND 35237966719 ns
+
+[LOG] MEDIA GLOBAL 42.5125 ms
+[LOG] MEDIA FIRST 7.27448 ms
+[LOG] MEDIA SECOND 35.238 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 1686.68 - 0.0164537%
+[LOG] MEDIA RESULTS SECOND LEVEL 158.562 - 9.40081%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 2 - QLENGHT: 5
+
+[LOG] GLOBAL 190522186461 ns
+[LOG] GLOBAL FIRST 190506233357 ns
+[LOG] GLOBAL SECOND 15953104 ns
+
+[LOG] MEDIA GLOBAL 190.522 ms
+[LOG] MEDIA FIRST 190.506 ms
+[LOG] MEDIA SECOND 0.0159531 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 22524.1 - 0.219723%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
+
+TWO LEVEL - DSET: /home/daniel/usaddr/usaddr.txt - ED: 2 - QLENGHT: 7
+
+[LOG] GLOBAL 201780782256 ns
+[LOG] GLOBAL FIRST 201764848575 ns
+[LOG] GLOBAL SECOND 15933681 ns
+
+[LOG] MEDIA GLOBAL 201.781 ms
+[LOG] MEDIA FIRST 201.765 ms
+[LOG] MEDIA SECOND 0.0159337 ms
+
+[LOG] MEDIA RESULTS FIRST LEVEL 4102.31 - 0.0400181%
+[LOG] MEDIA RESULTS SECOND LEVEL 0 - 0%
+----------------------------------------------------------------------------------------------
