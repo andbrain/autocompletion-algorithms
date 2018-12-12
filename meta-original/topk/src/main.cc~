@@ -1,0 +1,180 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include <vector>
+#include <set>
+#include <unordered_set>
+#include <algorithm>
+#include <string>
+#include <iostream>
+#include <fstream>
+
+#include "trie.h"
+#include "match.h"
+
+void read_file(const char *file, std::vector<std::string>& vec) {
+    std::ifstream fin(file);
+    if (!fin.is_open()) {
+        std::cerr << "error opening file " << file << std::endl;
+        exit(1);
+    }
+    std::string str;
+    while (getline(fin, str)) {
+        for (auto& ch : str)
+            ch = tolower(ch);
+        vec.push_back(str);
+    }
+}
+
+bool verbose = false;
+unsigned K;
+std::unordered_set<TrieNode*> visited;
+
+namespace std {
+    template<>
+    struct hash<std::pair<int, int>> {
+        inline size_t operator () (std::pair<int, int> const& p) const {
+            return ((std::hash<int>()(p.first) << 16) + std::hash<int>()(p.second));
+        }
+    };
+}
+
+void work(
+        Trie* trie,
+        const std::string &str,
+        std::multiset<Match> &M1,
+        std::multiset<std::pair<int, TrieNode*>> &M2,
+        std::unordered_set<std::pair<int, int>> &S,
+        std::multiset<std::pair<int, TrieNode*>>::iterator &iter,
+        std::vector<int> &result,
+        int i,
+        int tau
+        ) {
+    for (; iter != M2.end() && iter->first + i <= tau; ++iter) {
+        iter->second->get_records(result, K, visited);
+        if (result.size() == K) return;
+    }
+
+    std::vector<Match> out_range;
+    while (!M1.empty()) {
+        auto match = *M1.begin();
+        /*int ped = match.ped + i - match.i;
+        if (ped <= tau) {
+            out_range.push_back(match);
+            M1.erase(M1.begin());
+            continue;
+        }*/
+        // calculate new match position (x, y)
+        int x, y;
+        if (match.pos <= match.md) {
+            x = match.i + match.md + 1;
+            y = match.node->depth + match.pos + 1;
+        } else {
+            x = match.i + match.md - (match.pos - match.md) + 1;
+            y = match.node->depth + match.md + 1;
+        }
+        if (x > i) {
+            out_range.push_back(match);
+            M1.erase(M1.begin());
+            continue;
+        }
+        // only do when new ped not exceed tau + 1
+        if (match.ped + match.md <= tau) {
+            std::vector<TrieNode*> &vec = trie->index[str[x]][y];
+            auto iter = std::lower_bound(vec.begin(), vec.end(), match.node->id,
+                    [] (const TrieNode* node, const int id) {
+                        return node->id < id;
+                    });
+            while (iter != vec.end() && (*iter)->id <= match.node->last) {
+                Match new_match((*iter), x, match.ped + match.md, 0, 0);
+                auto id = std::make_pair(new_match.node->id, new_match.i);
+                if (S.find(id) == S.end()) {
+                    S.insert(id);
+                    M1.insert(new_match);
+                    M2.insert(std::make_pair(new_match.ped - new_match.i, (*iter)));
+                }
+                if (new_match.ped - new_match.i + i <= tau) {
+                    (*iter)->get_records(result, K, visited);
+                }
+                ++iter;
+            }
+            M1.erase(M1.begin());
+            if (++match.pos == match.md + match.md + 1) {
+                ++match.md;
+                match.pos = 0;
+            }
+            M1.insert(match);
+            if (result.size() == K) break;
+        } else
+            break;
+    }
+    for (auto& match : out_range)
+        M1.insert(match);
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 4) {
+        std::cerr << "missing argument" << std::endl;
+        std::cerr << "should be called with these three parameters: input_data query_data K" << std::endl;
+        exit(1);
+    }
+
+    //std::clog << "reading data...";
+    std::vector<std::string> records;
+    std::vector<std::string> queries;
+    read_file(argv[1], records);
+    read_file(argv[2], queries);
+    K = atoi(argv[3]);
+    if (argc >= 5 && strcmp(argv[4], "-v") == 0) verbose = true;
+    //std::clog << "done" << std::endl;
+
+    //std::clog << "building index...";
+    Trie* trie = new Trie();
+    for (auto i = 0; i < (int)records.size(); ++i) {
+        trie->insert(records[i], i);
+    }
+    trie->build_index();
+    //std::clog << "done" << std::endl;
+
+    //std::clog << "processing queries..." << std::endl;
+    std::vector<int> result;
+    std::vector<TrieNode*> equal_tau, tau_plus_1;
+    //std::clog << std::endl;
+    for (const auto& str : queries) {
+        std::multiset<Match> M1;
+        std::multiset<std::pair<int, TrieNode*>> M2;    // <ped - i, node>
+        std::unordered_set<std::pair<int, int>> S;    // <trienode id, input index>
+        M1.insert(Match(trie->root, -1, 0, 0, 0));
+        M2.insert(std::make_pair(1, trie->root));
+        S.insert(std::make_pair(trie->root->id, -1));
+
+        int tau = 0;
+        for (auto i = 0; i < (int)str.length(); ++i) {
+            result.clear();
+            visited.clear();
+
+            auto iter = M2.begin();
+            work(trie, str, M1, M2, S, iter, result, i, tau);
+            if (result.size() < K) {
+                ++tau;
+                work(trie, str, M1, M2, S, iter, result, i, tau);
+            }
+
+            if (verbose) {
+                std::cout << str.substr(0, i + 1) << " tau=" << tau << ':' << std::endl;
+                for (auto &i : result) {
+                    std::cout << '\t' << i << ':' << records[i] << std::endl;
+                }
+                std::cout << std::endl;
+            } else {
+                //std::cout << str.substr(0, i + 1) << " tau=" << tau << " result=" << result.size() << std::endl;
+            }
+        }
+        //std::cout << str << std::endl;
+    }
+    //std::clog << "done" << std::endl;
+
+    return 0;
+}
+

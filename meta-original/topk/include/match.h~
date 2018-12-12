@@ -1,0 +1,32 @@
+#ifndef MATCH_H_
+#define MATCH_H_
+
+#include <set>
+#include "trie.h"
+
+struct Match {
+    TrieNode* node; // match node
+    int i;          // input index
+    int ped;        // prefix edit distance for this match
+    int md;         // manhattan distance to current processing line
+    int pos;        // position of current line
+
+    Match(TrieNode* _node, int _i, int _ped, int _md, int _pos) :
+        node(_node), i(_i), ped(_ped), md(_md), pos(_pos) {}
+    inline bool operator < (const Match &other) const {
+        return this->ped + this->md < other.ped + other.md;
+    }
+};
+
+struct SimpleMatch {
+    TrieNode* node;
+    int i;
+    int ped;
+    SimpleMatch(TrieNode* _node, int _i, int _ped) :
+        node(_node), i(_i), ped(_ped) {}
+    inline bool operator < (const SimpleMatch &other) const {
+        return this->ped - this->i < other.ped - other.i;
+    }
+};
+
+#endif  // MATCH_H_
