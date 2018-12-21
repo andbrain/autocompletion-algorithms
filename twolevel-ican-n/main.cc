@@ -274,13 +274,13 @@ int main(int argc, char ** argv) {
 					
 					int prev_last = -1;
 					auto tit = trie->ids.begin();
-					for (auto mit = minActiveNodes.begin(); mit != minActiveNodes.end(); mit++) {
+					for (auto mit = pset->trieNodeDistanceMap.begin(); mit != pset->trieNodeDistanceMap.end(); mit++) {
 						if (mit->first->last <= prev_last) continue;
 						prev_last = mit->first->last;
 						tit = lower_bound(tit, trie->ids.end(), make_pair(mit->first->id, -1));
 						while (tit != trie->ids.end() && tit->first <= mit->first->last) {
+							// cout << "AQUI OH >>>> " << tit->first << " , " << tit->second << endl;
 							results.push_back(tit->second);
-							cout << tit->second << " - " << mit->second << endl;
 							++tit;
 						}
 					}

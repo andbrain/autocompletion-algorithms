@@ -45,6 +45,8 @@ class PrefixActiveNodeSet
 public:
 	typedef std::vector<TrieNode<charT>* > TrieNodeSet;
 
+	std::map<TrieNode<charT>*, unsigned> trieNodeDistanceMap;
+
 	void init(std::string &prefix, const unsigned editDistanceThreshold) {
 		this->prefix = prefix;
 		this->editDistanceThreshold = editDistanceThreshold;
@@ -91,17 +93,18 @@ public:
 		PrefixActiveNodeSet<charT> *newActiveNodeSet = new PrefixActiveNodeSet<charT>(newString, this->getEditDistanceThreshold());
 
 		// PAN:
+    /*
 		for (typename std::map<TrieNode<charT>*, PivotalActiveNode >::iterator mapIterator = PANMap.begin();
 		     mapIterator != PANMap.end(); mapIterator ++) {
 			// Compute the new active nodes for this trie node
 			_addPANSetForOneNode(mapIterator->first, mapIterator->second, additionalChar, newActiveNodeSet);
-		}
-		/* iterate over all the active nodes
+		}*/
+		// iterate over all the active nodes
 		for (typename std::map<TrieNode<charT>*, unsigned >::iterator mapIterator = trieNodeDistanceMap.begin();
 		     mapIterator != trieNodeDistanceMap.end(); mapIterator ++) {
 			// Compute the new active nodes for this trie node
 			_addActiveNodeSetForOneNode(mapIterator->first, mapIterator->second, additionalChar, newActiveNodeSet);
-		}*/
+		}
 
 
 		//PAN: update active node
@@ -236,7 +239,6 @@ private:
 	bool flagResultsCached;
 
 	// A map from trie node to its edit distance to the prefix
-	std::map<TrieNode<charT>*, unsigned> trieNodeDistanceMap;
 
 	//PAN: A map from trie node to its pivotal active nodes
 	std::map<TrieNode<charT>*, PivotalActiveNode > PANMap;
@@ -314,7 +316,7 @@ private:
 				panlocal.editdistanceofPrefix = pan.editdistanceofPrefix + max;
 				newActiveNodeSet->_addPAN(child, panlocal);
 			}
-			if (curDepth <= depthLimit) {// recursive call for each child
+			if (curDepth + 1 <= depthLimit) {// recursive call for each child
 				addPANUpToDepth(child, pan, curDepth+1, depthLimit, additionalChar, newActiveNodeSet);
 			}
 		}
