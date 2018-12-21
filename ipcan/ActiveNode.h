@@ -314,7 +314,7 @@ private:
 				panlocal.editdistanceofPrefix = pan.editdistanceofPrefix + max;
 				newActiveNodeSet->_addPAN(child, panlocal);
 			}
-			if (curDepth <= depthLimit) {// recursive call for each child
+			if (curDepth + 1 <= depthLimit) {// recursive call for each child
 				addPANUpToDepth(child, pan, curDepth+1, depthLimit, additionalChar, newActiveNodeSet);
 			}
 		}
