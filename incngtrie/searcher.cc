@@ -18,7 +18,9 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include <numeric>
 #include <getopt.h>
+#include <math.h>
 
 using namespace std;
 using namespace dbwsim;
@@ -34,6 +36,7 @@ long long num_actives = 0;
 long long smart_fetch_count = 0;
 long long stupid_fetch_count = 0;
 long long global = 0;
+	vector<double> times;
 
 EasyTimer indexing_timer, query_timer, stupid_timer, smarter_timer;
 
@@ -125,17 +128,18 @@ void running_test_mode(SearcherBase* searcher,
     num_results += searcher->result_set_.size();
     num_actives += searcher->current_active_.size();  
 
-    std::cout << searcher->result_set_.size() << std::endl;;
-    for(auto r : searcher->result_set_.result_ids_){
-      std::cout << r << "  ";
-    }
+    // std::cout << searcher->result_set_.size() << std::endl;;
+    // for(auto r : searcher->result_set_.result_ids_){
+    //   std::cout << r << "  ";
+    // }
 
 
     std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-    std::cout << "[LOG] Query performed in " << (endt - startt).count() << "ns" << std::endl;
+    // std::cout << "[LOG] Query performed in " << (endt - startt).count() << "ns" << std::endl;
 
     global += (endt - startt).count();  
+		times.push_back((double)(endt - startt).count()/1000000);
   }
 }
 
@@ -156,6 +160,16 @@ void loadqueryset(){
   }
 }
 
+double calcIC(std::vector<double> const & v){
+	double sum = std::accumulate(v.begin(), v.end(), 0.0);
+	double mean = sum / v.size();
+
+	double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0);
+	double stdev = std::sqrt(sq_sum / v.size() - mean * mean);
+
+	return stdev;
+}
+
 int main(int argc, char* argv[])
 {
   char c;
@@ -174,6 +188,7 @@ int main(int argc, char* argv[])
   int stepfrom = 1;
   bool do_stupid_fetch = false;
   TrieBase* indextrie;
+
   
   while ((c = getopt(argc,argv, "hvt:d:a:c:pik:fs")) != -1)
     switch (c){
@@ -283,6 +298,7 @@ int main(int argc, char* argv[])
 
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
+    std::cout << "[LOG] INTERVALO DE CONFIANÇA " << calcIC(times) << std::endl;
     // std::cout << "GLOBAL = " << global << std::endl;
       
       //stri node_str = "";

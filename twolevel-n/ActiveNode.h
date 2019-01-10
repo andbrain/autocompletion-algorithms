@@ -93,18 +93,18 @@ public:
 		PrefixActiveNodeSet<charT> *newActiveNodeSet = new PrefixActiveNodeSet<charT>(newString, this->getEditDistanceThreshold());
 
 		// PAN:
-    
+    /*
 		for (typename std::map<TrieNode<charT>*, PivotalActiveNode >::iterator mapIterator = PANMap.begin();
 		     mapIterator != PANMap.end(); mapIterator ++) {
 			// Compute the new active nodes for this trie node
 			_addPANSetForOneNode(mapIterator->first, mapIterator->second, additionalChar, newActiveNodeSet);
-		}
+		}*/
 		// iterate over all the active nodes
-		// for (typename std::map<TrieNode<charT>*, unsigned >::iterator mapIterator = trieNodeDistanceMap.begin();
-		//      mapIterator != trieNodeDistanceMap.end(); mapIterator ++) {
-		// 	// Compute the new active nodes for this trie node
-		// 	_addActiveNodeSetForOneNode(mapIterator->first, mapIterator->second, additionalChar, newActiveNodeSet);
-		// }
+		for (typename std::map<TrieNode<charT>*, unsigned >::iterator mapIterator = trieNodeDistanceMap.begin();
+		     mapIterator != trieNodeDistanceMap.end(); mapIterator ++) {
+			// Compute the new active nodes for this trie node
+			_addActiveNodeSetForOneNode(mapIterator->first, mapIterator->second, additionalChar, newActiveNodeSet);
+		}
 
 
 		//PAN: update active node
@@ -316,7 +316,7 @@ private:
 				panlocal.editdistanceofPrefix = pan.editdistanceofPrefix + max;
 				newActiveNodeSet->_addPAN(child, panlocal);
 			}
-			if (curDepth <= depthLimit) {// recursive call for each child
+			if (curDepth + 1 <= depthLimit) {// recursive call for each child
 				addPANUpToDepth(child, pan, curDepth+1, depthLimit, additionalChar, newActiveNodeSet);
 			}
 		}

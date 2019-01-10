@@ -47,6 +47,7 @@
         "iterator": "cpp",
         "memory": "cpp",
         "optional": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "cassert": "cpp"
     }
 }

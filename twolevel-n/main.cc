@@ -28,6 +28,7 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include <numeric>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 
 
 vector<string> recs;
@@ -81,6 +82,18 @@ unsigned int editDistance(const std::string& s1, const std::string &s2){
   }  return prevCol[len2];
 }
 
+
+double calcIC(std::vector<double> const & v){
+	double sum = std::accumulate(v.begin(), v.end(), 0.0);
+	double mean = sum / v.size();
+
+	std::vector<double> diff(v.size());
+	std::transform(v.begin(), v.end(), diff.begin(),
+				std::bind2nd(std::minus<double>(), mean));
+	double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+	double stdev = std::sqrt(sq_sum / v.size());
+	return stdev;
+}
 
 
 // std::vector<Occurrence_t> Trie_t::searchSecondLevel(std::vector<Occurrence_t>& fuzzyWords, const std::string& realQuery){
@@ -202,6 +215,9 @@ int main(int argc, char ** argv) {
 	int nResultsFirst = 0;
 	int nResultsFinal = 0;
 	int nTotal = 0;
+	vector<double> times;
+	vector<double> timesFirst;
+	vector<double> timesSecond;
 
 	readData(filename, recs);
 	readData(queryfile, queries);
@@ -271,16 +287,15 @@ int main(int argc, char ** argv) {
 				//    unordered_set<int> resrec;
 
 				if(j == firstWordQuery.length()){
-
 					
 					int prev_last = -1;
 					auto tit = trie->ids.begin();
-					for (auto mit = minActiveNodes.begin(); mit != minActiveNodes.end(); mit++) {
-						// cout << "mit->second" << " - " << mit->second << endl;
+					for (auto mit = pset->trieNodeDistanceMap.begin(); mit != pset->trieNodeDistanceMap.end(); mit++) {
 						if (mit->first->last <= prev_last) continue;
 						prev_last = mit->first->last;
 						tit = lower_bound(tit, trie->ids.end(), make_pair(mit->first->id, -1));
 						while (tit != trie->ids.end() && tit->first <= mit->first->last) {
+							// cout << "AQUI OH >>>> " << tit->first << " , " << tit->second << endl;
 							results.push_back(tit->second);
 							++tit;
 						}
@@ -347,14 +362,18 @@ int main(int argc, char ** argv) {
 		nResultsFinal += newResults.size();
 
 		nq++;
-		// std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns  -  " << (results.size()*100) / nTotal << "%" << std::endl;
+		// std::cout << "[LOG] Query "<< nq << ": " << ((double)(end - start).count()/1000000) << " ns  -  " << (results.size()*100) / nTotal << "%" << std::endl;
 
 		global += (end - start).count();
 		globalFirst += (endFirst - start).count();
 
+		times.push_back(((double)(end - start).count()/1000000));
+		timesFirst.push_back(((double)(endFirst - start).count()/1000000));
+
 		if(secondQuery.size() > 0){
 			nqSecond++;
 			globalSecond += (end - endFirst).count();
+			timesSecond.push_back(((double)(end - endFirst).count()/1000000));
 		}
 	}
 
@@ -371,7 +390,12 @@ int main(int argc, char ** argv) {
 
 	percBase = (100 * dnResultsFirst) / nTotal;
 	percSec = (100 * dnResultsSecond) / dnResultsFirst;
+
 	
+
+    std::cout << endl << "TIMES " << calcIC(times) << std::endl;
+    std::cout << endl << "TIMES FIRST " << calcIC(timesFirst) << std::endl;
+    std::cout << endl << "TIMES SECOND " << calcIC(timesSecond) << std::endl;
 
 	std::cout << endl << "TWO LEVEL - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;

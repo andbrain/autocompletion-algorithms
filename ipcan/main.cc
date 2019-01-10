@@ -23,6 +23,8 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include <tr1/unordered_map>
 #include <chrono>
 #include <stdlib.h>
+#include <math.h>
+#include <numeric>
 
 using namespace tr1;
 
@@ -39,6 +41,16 @@ void readData(string& filename, vector<string>& recs) {
 	}
 }
 
+double calcIC(std::vector<double> const & v){
+	double sum = std::accumulate(v.begin(), v.end(), 0.0);
+	double mean = sum / v.size();
+
+	double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0);
+	double stdev = std::sqrt(sq_sum / v.size() - mean * mean);
+
+	return stdev;
+}
+
 int main(int argc, char ** argv) {
 	string filename = string(argv[1]);
 	string queryfile = string(argv[2]);
@@ -53,6 +65,7 @@ int main(int argc, char ** argv) {
 
 	long long global = 0.0;
     int nq = 0;
+	vector<double> times;
 
 	readData(filename, recs);
 	readData(queryfile, queries);
@@ -116,6 +129,7 @@ int main(int argc, char ** argv) {
 				// std::cout << "[LOG] Query "<< nq << ": " << (end - start).count() << " ns" << std::endl;
 
 				global += (end - start).count();
+				times.push_back((double)(end - start).count()/1000000);
 			}
 		}
 
@@ -127,6 +141,7 @@ int main(int argc, char ** argv) {
     nstoms = 1000000;
 	std::cout << endl << "IPCAN - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << global << " ns" << std::endl;
+    std::cout << endl << "[LOG] INTERVALO DE CONFIANÇA " << calcIC(times) << std::endl;
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
 	std::cout << "----------------------------------------------------------------------------------------------" << std::endl;
 

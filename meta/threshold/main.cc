@@ -16,10 +16,12 @@ Contact  : dd11@mails.tsinghua.edu.cn
 #include "util.h"
 #include "trie.h"
 #include "mtrie.h"
+#include <math.h>
 #include <sys/time.h>
 #include <chrono>
 #include <stdlib.h>
 #include <cassert>
+#include <numeric>
 
 #define MAXIMUM 0x7fffffff
 
@@ -214,6 +216,18 @@ void quickFind(vector<TrieNode*>::iterator &vit, const vector<TrieNode*>::const_
 	*/
 }
 
+double calcIC(std::vector<double> const & v){
+	double sum = std::accumulate(v.begin(), v.end(), 0.0);
+	double mean = sum / v.size();
+
+	std::vector<double> diff(v.size());
+	std::transform(v.begin(), v.end(), diff.begin(),
+				std::bind2nd(std::minus<double>(), mean));
+	double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+	double stdev = std::sqrt(sq_sum / v.size());
+	return stdev;
+}
+
 int main(int argc, char ** argv) {
 	int maxPrefix = 1000;
 	double search_time[maxPrefix];
@@ -241,6 +255,9 @@ int main(int argc, char ** argv) {
 
 	// double globalTime = 0.0;
 	long long globalTime2 = 0;
+
+
+	vector<double> times;
 
 	// double timetotal = 0.0;
 	double tt = 0.0;
@@ -423,6 +440,8 @@ int main(int argc, char ** argv) {
 				std::chrono::nanoseconds endt = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 				tt += (endt - startt).count();
 
+				times.push_back(tt/1000000);
+
 				// cout << "search time " << i+1 << " = " << tt << endl;
 				// globalTime += timetotal;
 				globalTime2 += tt;
@@ -456,6 +475,7 @@ int main(int argc, char ** argv) {
 
 	std::cout << endl << "META - DSET: " << filename << " - ED: " << tau << " - QLENGHT: " << queries[0].length() << std::endl;
     std::cout << endl << "[LOG] GLOBAL " << globalTime2 << " ns" << std::endl;
+    std::cout << endl << "[LOG] INTERVALO DE CONFIANÇA " << calcIC(times) << std::endl;
     std::cout << "[LOG] MEDIA GLOBAL " << mglob/(dnq*nstoms) << " ms" << std::endl;
 	std::cout << "----------------------------------------------------------------------------------------------" << std::endl;
 	// cout << "Global time = " << globalTime2 << endl;
